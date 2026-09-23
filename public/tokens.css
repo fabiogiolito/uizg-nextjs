@@ -1,0 +1,219 @@
+/*
+  Design tokens. Every design decision lives here.
+  This file is served untouched from /public (linked in app/layout.tsx) so values stay
+  exactly as written. Going through the bundler rewrote hsl() colors to hex and lost hues.
+
+  Base tokens hold literal values. Derived tokens are computed from
+  base tokens, with the multipliers written inline. To override a
+  derived token, replace its whole value with a fixed one.
+
+  Colors use hsl. Neutrals (surface, border, text) are derived from
+  --color-bg with relative color syntax, so the background hue carries
+  into every neutral. The light page background is a near-white with a
+  warm hue, hsl(50 10% 99%), and that hue 50 tints the neutrals.
+*/
+:root {
+  color-scheme: light;
+
+  /* ---- Typography ---- */
+  --font-primary: var(--font-inter), system-ui, sans-serif;
+  --font-secondary: var(--font-ibm-plex-mono), ui-monospace, monospace;
+
+  --font-size-base: 14px;
+  --font-size-sm: round(calc(var(--font-size-base) * 0.86), 1px);
+  --font-size-xs: round(calc(var(--font-size-base) * 0.72), 1px);
+  --font-size-lg: round(calc(var(--font-size-base) * 1.15), 1px);
+  --font-size-title: calc(var(--font-size-base) * 1.5);
+  --font-size-display: calc(var(--font-size-base) * 2.25);
+
+  --line-height: 1.2;
+  --line-height-tight: 1;
+  --line-height-relaxed: 1.5;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 600;
+
+  --letter-spacing: 0;
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-wide: 0.06em;
+
+  /* ---- Color: base ---- */
+  /* Page backgrounds for each mode. --color-bg resolves to one of them through light-dark(),
+     which follows the element's color-scheme, and every neutral derives from --color-bg. */
+  --color-bg-light-mode: hsl(50 10% 99%);
+  --color-bg-dark-mode: hsl(50 12% 7%);
+  --color-bg: light-dark(var(--color-bg-light-mode), var(--color-bg-dark-mode));
+  --color-primary: hsl(226 100% 59%);
+  --color-success: hsl(150 71% 36%);
+  --color-warning: hsl(38 95% 44%);
+  --color-danger: hsl(0 69% 52%);
+
+  /* ---- Color: neutrals derived from --color-bg ----
+     Hue comes from the background, saturation is 12, lightness moves darker by a fixed amount. */
+  --color-surface: hsl(from var(--color-bg) h min(s, 12) calc(l - 3));
+  --color-surface-hover: hsl(from var(--color-bg) h 12 calc(l - 6));
+  --color-border: hsl(from var(--color-bg) h 12 calc(l - 12));
+  --color-border-strong: hsl(from var(--color-bg) h 12 calc(l - 22));
+  --color-text: hsl(from var(--color-bg) h 12 calc(l - 92));
+  --color-text-muted: hsl(from var(--color-bg) h 12 calc(l - 65));
+  --color-text-subtle: hsl(from var(--color-bg) h 12 calc(l - 40));
+  /* Background of elements that sit on the page with a shadow (cards, default buttons, inputs).
+     Two lightness points above the page: white stays white (lightness clamps at 100), dark backgrounds lift slightly. */
+  --color-raised: hsl(from var(--color-bg) h s calc(l + 2));
+
+  /* ---- Color: derived accents ----
+     Hover is 8 lightness points darker. The -contrast token is what goes on top of the color: black or white, whichever contrasts, with 15% of the color mixed in. */
+  --color-primary-hover: hsl(from var(--color-primary) h s calc(l - 8));
+  /* Opaque tints of the page background with the primary. Opaque so sticky cells hide what scrolls behind them. */
+  --color-primary-soft: color-mix(in srgb, var(--color-primary) 10%, var(--color-bg));
+  --color-primary-soft-hover: color-mix(in srgb, var(--color-primary) 16%, var(--color-bg));
+  --color-primary-contrast: color-mix(in hsl, contrast-color(var(--color-primary)) 85%, var(--color-primary));
+  --color-success-hover: hsl(from var(--color-success) h s calc(l - 8));
+  --color-success-contrast: color-mix(in hsl, contrast-color(var(--color-success)) 85%, var(--color-success));
+  --color-warning-hover: hsl(from var(--color-warning) h s calc(l - 8));
+  --color-warning-contrast: color-mix(in hsl, contrast-color(var(--color-warning)) 85%, var(--color-warning));
+  --color-danger-hover: hsl(from var(--color-danger) h s calc(l - 8));
+  --color-danger-contrast: color-mix(in hsl, contrast-color(var(--color-danger)) 85%, var(--color-danger));
+  --color-focus: var(--color-primary);
+
+  /* ---- Spacing ----
+     Gaps between elements are multiples of --space-unit. */
+  --space-unit: 4px;
+  --space-1: calc(var(--space-unit) * 1);
+  --space-2: calc(var(--space-unit) * 2);
+  --space-3: calc(var(--space-unit) * 3);
+  --space-4: calc(var(--space-unit) * 4);
+  --space-6: calc(var(--space-unit) * 6);
+  --space-8: calc(var(--space-unit) * 8);
+  --space-12: calc(var(--space-unit) * 12);
+
+  --inline-gap: var(--space-2);
+  --stack-gap: var(--space-4);
+  --section-gap: var(--space-8);
+  --text-pair-gap: calc(var(--space-unit) * 0.5);
+  --text-pair-gap-lg: var(--space-1);
+  --list-gap: 2px;
+  /* Indent of nested list items. */
+  --list-indent: var(--space-1);
+
+  /* ---- Padding ----
+     All paddings are multiples of --space-unit. */
+  --inline-v-padding: var(--space-2);
+  --inline-h-padding: var(--space-3);
+  --button-v-padding: var(--inline-v-padding);
+  --button-h-padding: var(--inline-h-padding);
+  --input-v-padding: var(--inline-v-padding);
+  --input-h-padding: var(--inline-h-padding);
+  --badge-h-padding: var(--space-2);
+  /* Pull a badge that ends a button or input closer to the edge. */
+  --badge-end-inset: calc(var(--space-unit) * -2);
+  --card-padding: var(--space-4);
+  --frame-padding: var(--space-1);
+  --page-padding: var(--space-6);
+  --list-padding: var(--space-1);
+  /* Tab items use the same padding on all sides. */
+  --tab-padding: var(--space-3);
+  --segmented-padding: calc(var(--space-unit) * 0.5);
+
+  /* ---- Sizing ---- */
+  --icon-size: 14px;
+  --checkbox-size: 16px;
+  --switch-height: 20px;
+  --switch-width: 36px;
+  /* Default slider: the track is as tall as the handle, which rides inside it. */
+  --slider-track-height: 16px;
+  --slider-handle-size: 20px;
+  --slider-track-height-sm: 8px;
+  --slider-handle-size-sm: 16px;
+  --control-height: var(--space-8);
+  --control-height-sm: round(calc(var(--control-height) * 0.86), 1px);
+  --control-height-lg: round(calc(var(--control-height) * 1.15), 1px);
+  --container-max-width: 1280px;
+  --avatar-size: var(--control-height);
+  --avatar-size-xs: 20px;
+  --avatar-overlap: calc(var(--avatar-size) * 0.3);
+  /* Gap cut out of an avatar where the next avatar or the presence dot overlaps it. */
+  --avatar-outline: 2px;
+  --presence-size: calc(var(--avatar-size) * 0.3);
+  --dropdown-min-width: 180px;
+  --modal-width: 480px;
+  --modal-width-sm: 360px;
+  --modal-width-lg: 720px;
+  --modal-width-xl: 1024px;
+  --modal-min-height-xl: 640px;
+  --tooltip-max-width: 240px;
+  --hover-card-width: 300px;
+  --toast-width: 360px;
+  --toast-offset: var(--space-4);
+  --data-label-max-width: 160px;
+  --hover-card-delay: 500ms;
+  --chat-bubble-max-width: 75%;
+  --attachment-size: 64px;
+  --attachment-size-sm: 56px;
+  --table-cell-h-padding: var(--space-3);
+  --table-cell-v-padding: var(--space-2);
+
+  /* ---- Borders ---- */
+  --border-width: 0.5px;
+  --radius: 6px;
+  --radius-sm: round(calc(var(--radius) * 0.67), 1px);
+  --radius-lg: round(calc(var(--radius) * 1.67), 1px);
+  --radius-full: 9999px;
+
+  /* ---- Effects ---- */
+  --shadow-sm: 0 1px 2px hsl(0 0% 0% / 0.06);
+  --shadow: 0 2px 8px hsl(0 0% 0% / 0.08);
+  --shadow-lg: 0 8px 24px hsl(0 0% 0% / 0.12);
+  --button-shadow: var(--shadow-sm);
+  --input-shadow: var(--shadow-sm);
+  --focus-ring: 0 0 0 3px hsl(from var(--color-focus) h s l / 0.3);
+  --opacity-disabled: 0.5;
+
+  /* ---- Motion ---- */
+  --duration: 150ms;
+  --duration-slow: calc(var(--duration) * 2);
+  --easing: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Fallback for browsers without contrast-color(). */
+@supports not (color: contrast-color(red)) {
+  :root {
+    --color-primary-contrast: color-mix(in hsl, hsl(0 0% 100%) 85%, var(--color-primary));
+    --color-success-contrast: color-mix(in hsl, hsl(0 0% 100%) 85%, var(--color-success));
+    --color-warning-contrast: color-mix(in hsl, hsl(0 0% 100%) 85%, var(--color-warning));
+    --color-danger-contrast: color-mix(in hsl, hsl(0 0% 100%) 85%, var(--color-danger));
+  }
+}
+
+/* ---- Dark mode ----
+   Neutrals move lighter instead of darker and shadows become faint outlines.
+   Applied when the system prefers dark (unless data-theme="light") or when data-theme="dark". */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --color-surface: hsl(from var(--color-bg) h min(s, 12) calc(l + 3));
+    --color-surface-hover: hsl(from var(--color-bg) h 12 calc(l + 6));
+    --color-border: hsl(from var(--color-bg) h 12 calc(l + 12));
+    --color-border-strong: hsl(from var(--color-bg) h 12 calc(l + 22));
+    --color-text: hsl(from var(--color-bg) h 12 calc(l + 92));
+    --color-text-muted: hsl(from var(--color-bg) h 12 calc(l + 65));
+    --color-text-subtle: hsl(from var(--color-bg) h 12 calc(l + 40));
+    --shadow-sm: 0 0 0 var(--border-width) var(--color-border);
+    --shadow: 0 0 0 var(--border-width) var(--color-border);
+    --shadow-lg: 0 0 0 var(--border-width) var(--color-border);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-surface: hsl(from var(--color-bg) h min(s, 12) calc(l + 3));
+  --color-surface-hover: hsl(from var(--color-bg) h 12 calc(l + 6));
+  --color-border: hsl(from var(--color-bg) h 12 calc(l + 12));
+  --color-border-strong: hsl(from var(--color-bg) h 12 calc(l + 22));
+  --color-text: hsl(from var(--color-bg) h 12 calc(l + 92));
+  --color-text-muted: hsl(from var(--color-bg) h 12 calc(l + 65));
+  --color-text-subtle: hsl(from var(--color-bg) h 12 calc(l + 40));
+  --shadow-sm: 0 0 0 var(--border-width) var(--color-border);
+  --shadow: 0 0 0 var(--border-width) var(--color-border);
+  --shadow-lg: 0 0 0 var(--border-width) var(--color-border);
+}
