@@ -5,8 +5,9 @@ import {
   Citations, Cite, CodeBlock, Collapsible, CollapsibleGroup, ColorPicker, ContextMenu, CopyButton, DataList, Divider,
   Dropdown, DropZone, Frame, HoverCard, Icon, Input, Field, List, ListDivider, ListItem, ListSection, ListText, Questionnaire, Radio,
   Segmented, Select, Shimmer, Slider, Spinner, Steps, SubMenu, Swatch, Switch, Tabs, TaskList, Text, TextPair, Toaster, toast,
-  Token, TokenInput, Toolbar, ToolbarGroup, Tooltip, PropsTable, SideNav, VarsTable, type Option,
+  Token, TokenInput, Toolbar, ToolbarGroup, Tooltip, PropsTable, SideNav, type Option,
 } from "@/components";
+import { VarsTable } from "@/components/VarsTable";
 import { iconPaths } from "@/components/Icon";
 import type { DocEntry } from "./types";
 import { jsx, q } from "./code";

@@ -27,7 +27,6 @@ export { List, ListDivider, ListHeading, ListItem, ListSection, ListText } from 
 export { CopyButton } from "./CopyButton";
 export { DataList, type DataItem } from "./DataList";
 export { Modal } from "./Modal";
-export { Playground } from "./Playground";
 export { PropsTable, type PropRow } from "./PropsTable";
 export { Questionnaire, type Question, type Answers } from "./Questionnaire";
 export { Radio } from "./Radio";
@@ -51,7 +50,6 @@ export { Toaster, toast, dismiss as dismissToast, type ToastOptions, type ToastP
 export { Toolbar, ToolbarGroup, ToolbarSeparator } from "./Toolbar";
 export { Token } from "./Token";
 export { TokenInput, type TokenItem } from "./TokenInput";
-export { VarsTable } from "./VarsTable";
 export type { Option } from "./useSuggestions";
 export { TextPair } from "./TextPair";
 export { TokenEditor } from "./TokenEditor";

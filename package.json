@@ -1,5 +1,5 @@
 {
-  "name": "uizg-nextjs",
+  "name": "uizg",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,18 +9,36 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "next": "16.3.4",
-    "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "next": ">=16",
+    "react": ">=19",
+    "react-dom": ">=19"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
-    "tailwindcss": "^4",
     "typescript": "^5"
-  }
+  },
+  "description": "uizg design system: React components, CSS and tokens. Consumed as source by Next.js apps via transpilePackages.",
+  "exports": {
+    ".": "./src/components/index.ts",
+    "./styles.css": "./src/styles/components.css",
+    "./tokens.css": "./public/tokens.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src/components",
+    "src/styles/components.css",
+    "public/tokens.css"
+  ],
+  "peerDependencies": {
+    "next": ">=16",
+    "react": ">=19",
+    "react-dom": ">=19"
+  },
+  "sideEffects": [
+    "*.css"
+  ]
 }

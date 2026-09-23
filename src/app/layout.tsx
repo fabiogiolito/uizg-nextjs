@@ -22,7 +22,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {/* eslint-disable-next-line @next/next/no-css-tags */}
         <link rel="stylesheet" href="/tokens.css" />
       </head>
-      <body className="antialiased">
+      <body>
         <div className="docs">
           <DocsNav groups={navGroups} title="uizg" />
           <main className="docs__main">{children}</main>

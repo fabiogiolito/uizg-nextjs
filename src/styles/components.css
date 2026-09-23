@@ -1,5 +1,8 @@
-/* Base */
+/* Base: the small reset the components rely on, so consumers need no other reset. */
+*, *::before, *::after { box-sizing: border-box; }
 body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
   font-family: var(--font-primary);
   font-size: var(--font-size-base);
   line-height: var(--line-height);

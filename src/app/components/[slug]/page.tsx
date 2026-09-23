@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Badge, CodeBlock, Collapsible, Playground, PropsTable, Text, TextPair, VarsTable } from "@/components";
+import { Badge, CodeBlock, Collapsible, PropsTable, Text, TextPair } from "@/components";
+// Docs-only components stay out of the package index.
+import { Playground } from "@/components/Playground";
+import { VarsTable } from "@/components/VarsTable";
 import { getCssBlocks, getTokens } from "@/docs/css";
 import { bySlug, registry } from "@/docs/registry";
 import type { Control } from "@/docs/types";
