@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useId, useState, type CSSProperties, type ReactNode } from "react";
+import { flushSync } from "react-dom";
 import { cx } from "./cx";
 import { Badge } from "./Badge";
 import { Button } from "./Button";
@@ -50,10 +51,17 @@ export function Questionnaire({ questions, onSubmit, onCancel, submitLabel = "Se
   const done = step >= total;
   const q = questions[step];
 
+  // Steps swap with a view transition: the card morphs to the new size while content slides and fades.
+  const vt = useId().replace(/\W/g, "");
   const go = (next: number) => {
-    setStep(next);
-    setOther("");
-    setOtherOpen(false);
+    const apply = () => {
+      setStep(next);
+      setOther("");
+      setOtherOpen(false);
+    };
+    if (!document.startViewTransition || matchMedia("(prefers-reduced-motion: reduce)").matches) return apply();
+    document.documentElement.dataset.questionnaireDir = next < step ? "back" : "forward";
+    document.startViewTransition(() => flushSync(apply)).finished.finally(() => delete document.documentElement.dataset.questionnaireDir);
   };
   const answer = (value: string) => {
     setAnswers((a) => ({ ...a, [q.id]: value }));
@@ -84,9 +92,10 @@ export function Questionnaire({ questions, onSubmit, onCancel, submitLabel = "Se
   return (
     <Card
       className={cx("questionnaire", className)}
+      style={{ viewTransitionName: `questionnaire-${vt}`, viewTransitionClass: "questionnaire" } as CSSProperties}
       footer={done ? <Button variant="fill" color="primary" icon="send" onClick={() => onSubmit(answers)}>{submitLabel}</Button> : undefined}
     >
-      <div className="questionnaire__body">
+      <div className="questionnaire__body" style={{ viewTransitionName: `questionnaire-body-${vt}`, viewTransitionClass: "questionnaire-body" } as CSSProperties}>
         <div className="questionnaire__header">
           {done ? (
             <TextPair title="Review your answers" description="Edit anything before sending." className="questionnaire__question" />

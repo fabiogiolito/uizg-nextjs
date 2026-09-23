@@ -32,4 +32,8 @@ export type DocEntry = {
   related?: string[];
   /** Preview background: raised (default) or surface. */
   previewOn?: "raised" | "surface";
+  /** Vertical placement in the preview: center (default) or end, for things that usually sit at the bottom. */
+  previewAlign?: "center" | "end";
+  /** Remove the preview padding so the component touches the edges, for things like a SideNav. */
+  previewFlush?: boolean;
 };

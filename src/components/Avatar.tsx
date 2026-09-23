@@ -9,9 +9,11 @@ export type AvatarProps = {
   /** Used for initials and the alt text. */
   name: string;
   src?: string;
-  size?: "xs" | "sm" | "md" | "lg";
+  size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
   shape?: "circle" | "square";
   presence?: Presence;
+  /** Small element overlaid at the bottom right, e.g. a company logo. */
+  badge?: ReactNode;
   className?: string;
 };
 
@@ -29,7 +31,7 @@ function hue(name: string) {
   return h;
 }
 
-export function Avatar({ name, src, size = "md", shape = "circle", presence, className }: AvatarProps) {
+export function Avatar({ name, src, size = "md", shape = "circle", presence, badge, className }: AvatarProps) {
   const [failed, setFailed] = useState(false);
   const showImage = src && !failed;
   return (
@@ -39,6 +41,7 @@ export function Avatar({ name, src, size = "md", shape = "circle", presence, cla
         size !== "md" && `avatar--${size}`,
         shape === "square" && "avatar--square",
         presence && "avatar--presence",
+        !!badge && "avatar--badge",
         className,
       )}
       style={{ "--avatar-hue": hue(name) } as CSSProperties}
@@ -56,6 +59,7 @@ export function Avatar({ name, src, size = "md", shape = "circle", presence, cla
         )}
       </span>
       {presence && <span className={cx("avatar__presence", `avatar__presence--${presence}`)} aria-label={presence} />}
+      {badge && <span className="avatar__badge">{badge}</span>}
     </span>
   );
 }

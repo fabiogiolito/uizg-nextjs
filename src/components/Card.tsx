@@ -1,8 +1,8 @@
-import type { ReactNode } from "react";
+import type { HTMLAttributes, ReactNode } from "react";
 import { cx } from "./cx";
 import { TextPair } from "./TextPair";
 
-export type CardProps = {
+export type CardProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   /** default: raised. surface: surface background. elevated: shadow instead of border. ghost: no box, content sits on whatever is behind. */
   variant?: "default" | "surface" | "elevated" | "ghost";
   /** Padding on all sides. */
@@ -11,8 +11,10 @@ export type CardProps = {
   sizeX?: "sm" | "md" | "lg";
   /** Vertical padding, overrides `size`. */
   sizeY?: "sm" | "md" | "lg";
-  /** Grow to fill a flex parent such as a Frame. */
+  /** Grow to fill a flex parent such as a Frame. As a section, fill the remaining height and scroll. */
   grow?: boolean;
+  /** Children are Cards rendered as sections with dividers between them and no outer padding. true or "column" stacks them; "row" lays them out side by side. */
+  sections?: boolean | "column" | "row";
   title?: ReactNode;
   /** Shown directly under the title as a text pair. */
   description?: ReactNode;
@@ -24,9 +26,10 @@ export type CardProps = {
 };
 
 /** A box with optional header, body and footer. Also the building block inside a Frame. */
-export function Card({ variant = "default", size = "md", sizeX, sizeY, grow, title, description, action, footer, className, children }: CardProps) {
+export function Card({ variant = "default", size = "md", sizeX, sizeY, grow, sections, title, description, action, footer, className, children, ...rest }: CardProps) {
   return (
     <div
+      {...rest}
       className={cx(
         "card",
         variant !== "default" && `card--${variant}`,
@@ -34,6 +37,8 @@ export function Card({ variant = "default", size = "md", sizeX, sizeY, grow, tit
         sizeX && `card--x-${sizeX}`,
         sizeY && `card--y-${sizeY}`,
         grow && "card--grow",
+        sections && "card--sections",
+        sections === "row" && "card--sections-row",
         className,
       )}
     >
@@ -43,7 +48,7 @@ export function Card({ variant = "default", size = "md", sizeX, sizeY, grow, tit
           {action}
         </div>
       )}
-      {children && <div className="card__body">{children}</div>}
+      {sections ? children : children && <div className="card__body">{children}</div>}
       {footer && <div className="card__footer">{footer}</div>}
     </div>
   );

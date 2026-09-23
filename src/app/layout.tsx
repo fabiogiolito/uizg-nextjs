@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
-import { SideNav, type NavGroup } from "@/components";
+import { DocsNav, type NavGroup } from "@/docs/DocsNav";
 import { groups, registry } from "@/docs/registry";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -24,9 +24,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body className="antialiased">
         <div className="docs">
-          <aside className="docs__nav">
-            <SideNav groups={navGroups} title="uizg" />
-          </aside>
+          <DocsNav groups={navGroups} title="uizg" />
           <main className="docs__main">{children}</main>
         </div>
       </body>

@@ -19,6 +19,8 @@ export type ButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "color">
   size?: "sm" | "md" | "lg";
   /** Icon shown before the label, centered on its first line. */
   icon?: IconName;
+  /** Any element before the label, e.g. an Avatar. */
+  leading?: ReactNode;
   /** Icon shown after the label. */
   trailingIcon?: IconName;
   /** Content pushed to the end of the button, e.g. a shortcut hint or a badge. */
@@ -33,6 +35,7 @@ export function Button({
   color = "default",
   size = "md",
   icon,
+  leading,
   trailingIcon,
   trailing,
   block,
@@ -62,6 +65,7 @@ export function Button({
           <Icon name={icon} />
         </span>
       )}
+      {leading && <span className="button__leading">{leading}</span>}
       {hasChildren && <span className="button__label">{children}</span>}
       {trailingIcon && (
         <span className="button__icon">

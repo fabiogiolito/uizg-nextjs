@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
-import { ComposerDemo, ModalDemo, TableDemo } from "./demos";
+import { BoardDemo, ComposerDemo, ModalDemo, SplitDemo, TableDemo } from "./demos";
 import {
   Attachment, Autocomplete, Avatar, AvatarGroup, Badge, Banner, Blockquote, Button, ButtonGroup, Card, Chat, Checkbox, Choice,
   Citations, Cite, CodeBlock, Collapsible, CollapsibleGroup, ColorPicker, ContextMenu, CopyButton, DataList, Divider,
-  Dropdown, DropZone, Frame, HoverCard, Icon, Input, Field, List, ListDivider, ListItem, ListSection, Questionnaire, Radio,
-  Segmented, Select, Shimmer, Slider, Spinner, SubMenu, Swatch, Switch, Tabs, TaskList, Text, TextPair, Toaster, toast,
+  Dropdown, DropZone, Frame, HoverCard, Icon, Input, Field, List, ListDivider, ListItem, ListSection, ListText, Questionnaire, Radio,
+  Segmented, Select, Shimmer, Slider, Spinner, Steps, SubMenu, Swatch, Switch, Tabs, TaskList, Text, TextPair, Toaster, toast,
   Token, TokenInput, Toolbar, ToolbarGroup, Tooltip, PropsTable, SideNav, VarsTable, type Option,
 } from "@/components";
 import { iconPaths } from "@/components/Icon";
@@ -65,7 +65,65 @@ export const registry: DocEntry[] = [
     cssBlocks: ["Blockquote"],
   },
   {
-    slug: "divider", name: "Divider", group: "Layout", description: "A horizontal rule, optionally thicker, spaced, or with centered content.",
+    slug: "side-nav", name: "SideNav", group: "Layout", description: "App navigation column: sticky header and footer, a scrolling middle, collapsible and resizable.",
+    usage: ["Give it a container with a height; it fills it.", "Put brand, search and primary actions in header; account and secondary actions in footer.", "The body is usually a List; nested ListItems get a guide line."],
+    controls: { collapsible: { type: "boolean", default: true }, expandOnHover: { type: "boolean", doc: "When collapsed, hovering the rail peeks the full nav over the page." }, resizable: { type: "boolean", default: true }, border: { type: "boolean", default: true }, footer: { type: "boolean", default: true } },
+    extraProps: [{ name: "header / footer / children", type: "ReactNode", description: "Sticky top, sticky bottom, scrolling middle." }, { name: "collapsed / defaultCollapsed / onCollapsedChange", type: "boolean / (collapsed) => void" }, { name: "width / defaultWidth / minWidth / maxWidth / onWidthChange", type: "number / (width) => void", description: "Pixels. Double-click the edge to reset." }],
+    render: (p) => (
+      <div style={{ height: 520, display: "flex" }}>
+        <SideNav
+          collapsible={bool(p.collapsible)}
+          expandOnHover={bool(p.expandOnHover)}
+          resizable={bool(p.resizable)}
+          border={bool(p.border)}
+          header={<><Text size="title">Email</Text><Input size="sm" icon="search" placeholder="Find message" aria-label="Search" /><Button variant="ghost" block icon="edit">Compose</Button></>}
+          footer={bool(p.footer) ? (
+            <div className="row">
+              <Dropdown side="top" className="grow" trigger={(t) => <Button {...t} variant="ghost" block><Avatar name="Corina McCoy" size="sm" />Corina McCoy</Button>}>
+                <ListSection title="Logged in as"><ListText>corina@bytelogic.inc</ListText></ListSection>
+                <ListSection><ListItem icon="settings" label="Settings" /><ListItem icon="book" label="Docs" /></ListSection>
+                <ListSection><ListItem icon="logOut" label="Log out" danger /></ListSection>
+              </Dropdown>
+              <Button size="sm" variant="ghost" icon="settings" aria-label="Settings" />
+            </div>
+          ) : undefined}
+        >
+          <List>
+            <ListItem icon="inbox" label="Inbox" href="#inbox" selected />
+            <ListItem icon="tag" label="Tags" collapsible defaultExpanded={false}>
+              <ListItem label="Social" href="#social" />
+              <ListItem label="Promotions" href="#promotions" />
+              <ListItem label="Newsletters" href="#newsletters" />
+            </ListItem>
+            <ListItem icon="send" label="Outbox" href="#outbox" />
+            <ListItem icon="alertTriangle" label="Spam" href="#spam" />
+          </List>
+        </SideNav>
+      </div>
+    ),
+    code: (p) => `<SideNav${p.collapsible ? " collapsible" : ""}${p.expandOnHover ? " expandOnHover" : ""}${p.resizable ? " resizable" : ""}${p.border ? "" : " border={false}"}\n  header={<><Text size="title">Email</Text><Input size="sm" icon="search" placeholder="Find message" /><Button variant="ghost" block icon="edit">Compose</Button></>}\n${p.footer ? '  footer={<Dropdown side="top" trigger={(t) => <Button {...t} variant="ghost" block><Avatar name="Corina McCoy" size="sm" />Corina McCoy</Button>}>…</Dropdown>}\n' : ""}>\n  <List>\n    <ListItem icon="inbox" label="Inbox" href="/inbox" selected />\n    <ListItem icon="tag" label="Tags" collapsible defaultExpanded={false}>\n      <ListItem label="Social" href="/tags/social" />\n      <ListItem label="Promotions" href="/tags/promotions" />\n    </ListItem>\n    <ListItem icon="send" label="Outbox" href="/outbox" />\n  </List>\n</SideNav>`,
+    cssBlocks: ["Side nav"], related: ["list"], previewOn: "surface", previewFlush: true,
+  },
+  {
+    slug: "split", name: "Split", group: "Layout", description: "Primary content with an optional second pane: drag to resize, clamped widths, animated open and close, remembered size.",
+    usage: ["Put the page content in children and the detail view in pane; pass null to close it.", "The primary side resizes while the pane fades in, so content can be swapped freely.", "Give it a storageKey to remember the dragged size per screen."],
+    controls: { remember: { type: "boolean", default: true, doc: "Persist the size under a storageKey." } },
+    extraProps: [{ name: "pane", type: "ReactNode | null", description: "The second pane; null closes it with an animation." }, { name: "defaultSize", type: "number", default: "40", description: "Pane width in percent before any drag." }, { name: "minWidth / maxWidth / minPrimary", type: "number", default: "280 / 720 / 320", description: "Pixel limits for the pane and the primary side." }, { name: "storageKey", type: "string", description: "localStorage key for the dragged size." }, { name: "onClose", type: "() => void", description: "Called on Escape while the pane is open." }],
+    render: (p) => <div style={{ height: 420 }}><SplitDemo p={p} /></div>,
+    code: (p) => `<Split${p.remember ? ' storageKey="candidates"' : ""} pane={selected ? <CandidateDetail id={selected} onClose={() => setSelected(null)} /> : null}>\n  <CandidateList onPick={setSelected} />\n</Split>`,
+    cssBlocks: ["Split"], related: ["side-nav", "board"], previewOn: "surface", previewFlush: true,
+  },
+  {
+    slug: "board", name: "Board", group: "Layout", description: "Columns of draggable items with fixed headers, scrolling bodies, hover actions and collapsible rails.",
+    usage: ["Give the Board a height; columns fill it and their bodies scroll.", "Items drag between columns; handle onMove and update your data.", "Collapsed columns still accept drops, so use them for Archive or Done.", "For a detail view, wrap the Board in a Split and pass the selected item's column to focus; the other columns vanish while the pane opens."],
+    controls: { draggable: { type: "boolean", default: true, doc: "Items can be dragged between columns." }, collapsible: { type: "boolean", default: true, doc: "Show the collapse toggle on the first three columns." }, header: { type: "boolean", doc: "Extra header content (a filter) on the first column." } },
+    extraProps: [{ name: "Board", type: "{ onMove(itemId, from, to), draggable?, focus?, children }", description: "draggable defaults to true; items can override it. focus shows one column and animates the rest away." }, { name: "BoardColumn", type: "{ id, title, icon?, count?, actions?, header?, collapsible?, collapsed?, defaultCollapsed?, onCollapsedChange?, children }", description: "actions show at the top right on hover." }, { name: "BoardItem", type: "{ id, leading?, label, description?, trailing?, note?, accent?, selected?, onClick?, draggable? }", description: "A row; onClick opens it, note is an italic line below, accent a bar on the left." }],
+    render: (p) => <div style={{ height: 560 }}><BoardDemo p={p} /></div>,
+    code: (p) => `<Split pane={selected ? <CandidateDetails id={selected} onClose={close} /> : null} onClose={close}>\n{selected && <Button variant="ghost" icon="arrowLeft" onClick={close}>All columns</Button>}\n<Board onMove={(id, from, to) => moveCandidate(id, from, to)}${p.draggable ? "" : " draggable={false}"} focus={selected ? columnOf(selected) : null}>\n  <BoardColumn id="inbox" icon="inbox" title="Inbox" count={inbox.length}${p.collapsible ? " collapsible" : ""} actions={<Dropdown size="sm" variant="ghost" icon="more" hideChevron>…</Dropdown>}${p.header ? ' header={<Input size="sm" icon="search" placeholder="Filter" />}' : ""}>\n    <List>\n      {inbox.map((c) => (\n        <BoardItem key={c.id} id={c.id} leading={<Avatar name={c.name} size="lg" shape="square" badge={<img src={c.logo} alt="" />} />} label={c.name} description={c.role} trailing={c.age} note={c.note} accent={c.unread} selected={selected === c.id} onClick={() => setSelected(c.id)} />\n      ))}\n    </List>\n  </BoardColumn>\n  <BoardColumn id="interviewing" icon="calendar" title="Interviewing" count={interviewing.length}>\n    <List>\n      <ListSection title="July 15" trailing="Tue">…</ListSection>\n    </List>\n  </BoardColumn>\n  <BoardColumn id="archived" icon="archive" title="Archived" count={archived.length} collapsible defaultCollapsed>…</BoardColumn>\n</Board>\n</Split>`,
+    cssBlocks: ["Board"], related: ["card", "list", "avatar"], previewOn: "surface",
+  },
+  {
+    slug: "divider", name: "Divider", group: "Blocks", description: "A horizontal rule, optionally thicker, spaced, or with centered content.",
     controls: { children: { type: "text", default: "" , doc: "Content centered between two lines." }, weight: { type: "select", options: ["default", "thick"], default: "default" }, spacing: { type: "select", options: ["none", "sm", "md", "lg"], default: "none" } },
     states: [{ name: "Plain", props: {} }, { name: "Thick", props: { weight: "thick" } }, { name: "Labeled", props: { children: "March 15, 2026" } }],
     extraProps: [{"name": "className", "type": "string"}],
@@ -73,16 +131,40 @@ export const registry: DocEntry[] = [
     cssBlocks: ["Divider"],
   },
   {
-    slug: "card", name: "Card", group: "Layout", description: "A box with optional header, body and footer. Also the building block inside a Frame.",
+    slug: "card", name: "Card", group: "Blocks", description: "A box with optional header, body and footer. Also the building block inside a Frame.",
     usage: ["Use title + description for the header; put controls in action.", "Ghost cards carry padding without a box, for content placed on a Frame."],
-    controls: { title: { type: "text", default: "Card title" }, description: { type: "text", default: "A short description of what this card holds." }, children: { type: "text", default: "Body content goes here." }, variant: { type: "select", options: ["default", "surface", "elevated", "ghost"], default: "default" }, size: { type: "select", options: SIZES, default: "md" }, action: { type: "boolean", doc: "Show a badge in the header action slot." }, footer: { type: "boolean", doc: "Show footer buttons." } },
-    states: [{ name: "Default", props: {} }, { name: "Surface", props: { variant: "surface" } }, { name: "Elevated", props: { variant: "elevated" } }, { name: "With actions", props: { action: true, footer: true } }],
-    extraProps: [{"name": "sizeX / sizeY", "type": "\"sm\" | \"md\" | \"lg\"", "description": "Per-axis padding, overriding size."}, {"name": "grow", "type": "boolean", "description": "Fill a flex parent such as a Frame."}, {"name": "action", "type": "ReactNode", "description": "Right side of the header."}, {"name": "footer", "type": "ReactNode", "description": "Footer row, right-aligned."}, {"name": "children", "type": "ReactNode", "description": "Body."}],
-    render: (p) => <Card variant={opt(p.variant, "default")} size={opt(p.size, "md")} title={str(p.title) || undefined} description={str(p.description) || undefined} action={bool(p.action) ? <Badge color="success" dot>Live</Badge> : undefined} footer={bool(p.footer) ? <><Button variant="ghost">Cancel</Button><Button variant="fill" color="primary">Save</Button></> : undefined}>{str(p.children) || undefined}</Card>,
+    controls: { title: { type: "text", default: "Card title" }, description: { type: "text", default: "A short description of what this card holds." }, children: { type: "text", default: "Body content goes here." }, variant: { type: "select", options: ["default", "surface", "elevated", "ghost"], default: "default" }, size: { type: "select", options: SIZES, default: "md" }, sections: { type: "select", options: ["", "column", "row"], default: "", doc: "Nested Cards as divided sections, stacked or side by side." }, action: { type: "boolean", doc: "Show a badge in the header action slot." }, footer: { type: "boolean", doc: "Show footer buttons." } },
+    states: [{ name: "Default", props: {} }, { name: "Surface", props: { variant: "surface" } }, { name: "Elevated", props: { variant: "elevated" } }, { name: "With actions", props: { action: true, footer: true } }, { name: "Sections", props: { sections: "column", footer: true }, description: "Nested Cards as divided sections; the middle one grows and scrolls." }, { name: "Row sections", props: { sections: "row" }, description: "Side by side: a fixed pane and a growing surface pane." }],
+    extraProps: [{"name": "sizeX / sizeY", "type": "\"sm\" | \"md\" | \"lg\"", "description": "Per-axis padding, overriding size."}, {"name": "grow", "type": "boolean", "description": "Fill a flex parent such as a Frame."}, {"name": "action", "type": "ReactNode", "description": "Right side of the header."}, {"name": "footer", "type": "ReactNode", "description": "Footer row, right-aligned. Any content."}, {"name": "sections", "type": "boolean | \"column\" | \"row\"", "description": "Children are Cards rendered as divided sections, stacked or side by side; a section with grow fills the remaining space. Sections keep their own variant, e.g. surface."}, {"name": "children", "type": "ReactNode", "description": "Body."}],
+    render: (p) => str(p.sections) === "row" ? (
+      <Card sections="row" variant={opt(p.variant, "default")} size={opt(p.size, "md")} title={str(p.title) || undefined} description={str(p.description) || undefined} action={bool(p.action) ? <Badge color="success" dot>Live</Badge> : undefined} footer={bool(p.footer) ? <><Button variant="ghost">Cancel</Button><Button variant="fill" color="primary">Save</Button></> : undefined}>
+        <Card style={{ width: 320 }}>
+          <div className="row"><Avatar name="Alex Barnes" size="xl" shape="square" /><TextPair size="lg" title="Alex Barnes" description="Software Engineer" className="grow" /><Badge color="success">95</Badge></div>
+          <div className="row"><Button variant="fill" color="primary" icon="checkCircle">Mark done</Button><Button icon="pause">Pause</Button></div>
+        </Card>
+        <Card grow variant="surface">
+          <div className="row"><Text size="label" tone="muted" className="grow">Step 3 · Send SMS</Text><Steps total={5} current={3} /></div>
+          <Text as="p">Hello Alex, this is Corina from ByteLogic. I sent you an email about a job position we have open.</Text>
+        </Card>
+      </Card>
+    ) : str(p.sections) === "column" ? (
+      <Card sections variant={opt(p.variant, "default")} size={opt(p.size, "md")} title={str(p.title) || undefined} description={str(p.description) || undefined} action={bool(p.action) ? <Badge color="success" dot>Live</Badge> : undefined} footer={bool(p.footer) ? <><Text size="sm" tone="muted" className="grow">3 sections</Text><Button variant="fill" color="primary">Save</Button></> : undefined} style={{ height: 360 }}>
+        <Card><Input size="sm" icon="search" placeholder="Filter" aria-label="Filter" /></Card>
+        <Card grow><div className="stack stack--tight">{Array.from({ length: 12 }, (_, n) => <Text key={n}>Row {n + 1} scrolls inside the middle section.</Text>)}</div></Card>
+        <Card><Text size="sm" tone="muted">12 rows</Text></Card>
+      </Card>
+    ) : (
+      <Card variant={opt(p.variant, "default")} size={opt(p.size, "md")} title={str(p.title) || undefined} description={str(p.description) || undefined} action={bool(p.action) ? <Badge color="success" dot>Live</Badge> : undefined} footer={bool(p.footer) ? <><Button variant="ghost">Cancel</Button><Button variant="fill" color="primary">Save</Button></> : undefined}>{str(p.children) || undefined}</Card>
+    ),
+    code: (p) => str(p.sections) === "row"
+      ? `<Card sections="row">\n  <Card style={{ width: 320 }}>\n    <div className="row"><Avatar name="Alex Barnes" size="xl" shape="square" /><TextPair size="lg" title="Alex Barnes" description="Software Engineer" className="grow" /><Badge color="success">95</Badge></div>\n    <div className="row"><Button variant="fill" color="primary" icon="checkCircle">Mark done</Button><Button icon="pause">Pause</Button></div>\n  </Card>\n  {/* grow fills the remaining width; sections keep their variant. */}\n  <Card grow variant="surface">\n    <div className="row"><Text size="label" tone="muted" className="grow">Step 3 · Send SMS</Text><Steps total={5} current={3} /></div>\n    <Text as="p">Hello Alex…</Text>\n  </Card>\n</Card>`
+      : str(p.sections) === "column"
+      ? `<Card sections${p.variant !== "default" ? ` variant="${str(p.variant)}"` : ""}${p.size !== "md" ? ` size="${str(p.size)}"` : ""}${str(p.title) ? ` title="${str(p.title)}"` : ""}${str(p.description) ? ` description="${str(p.description)}"` : ""}${p.action ? ' action={<Badge color="success" dot>Live</Badge>}' : ""}${p.footer ? ' footer={<><Text size="sm" tone="muted" className="grow">3 sections</Text><Button variant="fill" color="primary">Save</Button></>}' : ""} style={{ height: 360 }}>\n  {/* Each child Card is a section with a divider between them. */}\n  <Card><Input size="sm" icon="search" placeholder="Filter" /></Card>\n  {/* grow fills the remaining height and scrolls. */}\n  <Card grow>{rows.map((r) => <Text key={r}>{r}</Text>)}</Card>\n  <Card><Text size="sm" tone="muted">12 rows</Text></Card>\n</Card>`
+      : jsx("Card", { variant: p.variant !== "default" ? q(str(p.variant)) : undefined, size: p.size !== "md" ? q(str(p.size)) : undefined, title: str(p.title) ? q(str(p.title)) : undefined, description: str(p.description) ? q(str(p.description)) : undefined, action: p.action ? "{<Badge color=\"success\" dot>Live</Badge>}" : undefined, footer: p.footer ? "{<><Button variant=\"ghost\">Cancel</Button><Button variant=\"fill\" color=\"primary\">Save</Button></>}" : undefined }, str(p.children) ? [str(p.children)] : []),
     cssBlocks: ["Card"], related: ["frame", "banner"],
   },
   {
-    slug: "frame", name: "Frame", group: "Layout", description: "A surface that groups cards with a small inset; ghost cards put content straight on it.",
+    slug: "frame", name: "Frame", group: "Blocks", description: "A surface that groups cards with a small inset; ghost cards put content straight on it.",
     controls: { direction: { type: "select", options: ["column", "row"], default: "column" } },
     extraProps: [{"name": "children", "type": "ReactNode", "description": "Cards. Use variant=\"ghost\" for content directly on the surface, grow to fill a row."}],
     render: (p) => <Frame direction={opt(p.direction, "column")}><Card variant="ghost"><TextPair size="lg" title="Section header" description="Brief description" /></Card><Card grow><TextPair size="lg" title="Section title" description="Section description" /></Card><Card variant="ghost"><Text tone="muted">Footer</Text></Card></Frame>,
@@ -90,7 +172,7 @@ export const registry: DocEntry[] = [
     cssBlocks: ["Frame"], related: ["card"], previewOn: "raised",
   },
   {
-    slug: "swatch", name: "Swatch", group: "Layout", description: "Color preview on a checkerboard with the code written over it.",
+    slug: "swatch", name: "Swatch", group: "Blocks", description: "Color preview on a checkerboard with the code written over it.",
     controls: { color: { type: "text", default: "hsl(226 100% 59% / 0.8)" }, name: { type: "text", default: "--color-primary" }, size: { type: "select", options: SIZES, default: "md" } },
     extraProps: [{"name": "label", "type": "ReactNode", "description": "Text over the color; defaults to the color string. Pass \"\" to hide it."}],
     render: (p) => <Swatch color={str(p.color)} name={str(p.name) || undefined} size={opt(p.size, "md")} />,
@@ -144,6 +226,12 @@ export const registry: DocEntry[] = [
     cssBlocks: ["Toolbar"], related: ["button-group", "composer"],
   },
   /* ---------------- Status ---------------- */
+  {
+    slug: "steps", name: "Steps", group: "Status", description: "A row of dots showing progress through a fixed number of steps.",
+    controls: { total: { type: "number", default: 5, min: 1, max: 12 }, current: { type: "number", default: 3, min: 0, max: 12 } },
+    render: (p) => <Steps total={Number(p.total)} current={Number(p.current)} />,
+    cssBlocks: ["Steps"], related: ["badge", "questionnaire"],
+  },
   {
     slug: "badge", name: "Badge", group: "Status", description: "Small label for status and counts. Same variant and color axes as Button.",
     controls: { children: { type: "text", default: "Active" }, variant: { type: "select", options: VARIANTS, default: "default" }, color: { type: "select", options: COLORS, default: "default" }, dot: { type: "boolean" }, icon: { type: "select", options: ["", ...ICONS], default: "" } },
@@ -310,7 +398,7 @@ export const registry: DocEntry[] = [
   {
     slug: "list", name: "List", group: "Navigation", description: "Vertical list of ghost-button items with sections, dividers and nested trees. Also the body of every menu.",
     controls: { bordered: { type: "boolean", default: true }, tree: { type: "boolean", doc: "Show nested items." } },
-    extraProps: [{"name": "role", "type": "\"list\" | \"menu\" | \"listbox\""}, {"name": "ListItem", "type": "{ icon?, label, description?, trailing?, trailingIcon?, selected?, danger?, href?, children?, collapsible?, defaultExpanded?, onClick? }", "description": "Children make a nested tree; collapsible adds a chevron."}, {"name": "ListSection", "type": "{ title?, children }", "description": "Groups items; consecutive sections get a divider."}, {"name": "ListDivider / ListHeading", "type": "", "description": "Manual divider and heading."}],
+    extraProps: [{"name": "role", "type": "\"list\" | \"menu\" | \"listbox\""}, {"name": "ListItem", "type": "{ icon?, leading?, label, description?, trailing?, trailingIcon?, selected?, danger?, href?, children?, collapsible?, defaultExpanded?, onClick? }", "description": "Children make a nested tree; collapsible adds a chevron."}, {"name": "ListSection", "type": "{ title?, children }", "description": "Groups items; consecutive sections get a divider."}, {"name": "ListDivider / ListHeading", "type": "", "description": "Manual divider and heading."}],
     render: (p) => <List bordered={bool(p.bordered)}><ListSection title="Workspace"><ListItem icon="user" label="Profile" trailing="⌘P" /><ListItem icon="settings" label="Settings" description="Preferences and team" selected />{bool(p.tree) ? <ListItem icon="copy" label="Projects" collapsible><ListItem label="Brew guides" /><ListItem label="Roasting" /></ListItem> : <ListItem icon="copy" label="Duplicate" />}</ListSection><ListSection><ListItem icon="trash" label="Delete workspace" danger /></ListSection></List>,
     code: (p) => `<List${p.bordered ? " bordered" : ""}>\n  <ListSection title="Workspace">\n    <ListItem icon="user" label="Profile" trailing="⌘P" />\n    <ListItem icon="settings" label="Settings" description="Preferences and team" selected />\n${p.tree ? '    <ListItem icon="copy" label="Projects" collapsible>\n      <ListItem label="Brew guides" />\n    </ListItem>\n' : ""}  </ListSection>\n  <ListSection>\n    <ListItem icon="trash" label="Delete workspace" danger />\n  </ListSection>\n</List>`,
     cssBlocks: ["List (also used as dropdown menu)"], related: ["dropdown", "context-menu"],
@@ -318,7 +406,7 @@ export const registry: DocEntry[] = [
   {
     slug: "dropdown", name: "Dropdown", group: "Navigation", description: "Trigger button plus a List as a menu, anchored with CSS anchor positioning. Nest with SubMenu.",
     controls: { label: { type: "text", default: "Actions" }, variant: { type: "select", options: VARIANTS, default: "default" }, color: { type: "select", options: COLORS, default: "default" }, size: { type: "select", options: SIZES, default: "md" }, icon: { type: "select", options: ["", ...ICONS], default: "" }, hideChevron: { type: "boolean" }, align: { type: "select", options: ["left", "right"], default: "left" }, nested: { type: "boolean", doc: "Include a SubMenu." } },
-    extraProps: [{"name": "trigger", "type": "(props, open) => ReactNode", "description": "Render your own trigger with the props spread onto it."}, {"name": "side", "type": "\"bottom\" | \"right\"", "description": "Right opens beside the trigger, for nested menus."}, {"name": "openOnHover", "type": "boolean"}, {"name": "triggerLabel", "type": "string", "description": "Accessible label for icon-only triggers."}, {"name": "children", "type": "ReactNode", "description": "ListItem, ListSection, ListDivider, SubMenu."}, {"name": "SubMenu", "type": "{ label, icon?, description?, disabled?, children }", "description": "A Dropdown triggered by a list item, opening beside it."}],
+    extraProps: [{"name": "trigger", "type": "(props, open) => ReactNode", "description": "Render your own trigger with the props spread onto it."}, {"name": "side", "type": "\"bottom\" | \"top\" | \"right\"", "description": "Right opens beside the trigger, for nested menus."}, {"name": "openOnHover", "type": "boolean"}, {"name": "triggerLabel", "type": "string", "description": "Accessible label for icon-only triggers."}, {"name": "children", "type": "ReactNode", "description": "ListItem, ListSection, ListDivider, SubMenu."}, {"name": "SubMenu", "type": "{ label, icon?, description?, disabled?, children }", "description": "A Dropdown triggered by a list item, opening beside it."}],
     render: (p) => <Dropdown label={str(p.label) || undefined} variant={opt(p.variant, "default")} color={opt(p.color, "default")} size={opt(p.size, "md")} icon={opt(p.icon, undefined) as never} hideChevron={bool(p.hideChevron)} align={opt(p.align, "left")} triggerLabel="Menu">{menu}{bool(p.nested) && <SubMenu icon="arrowRight" label="Move to"><ListItem label="Inbox" /><ListItem label="Archive" /></SubMenu>}</Dropdown>,
     code: (p) => jsx("Dropdown", { label: q(str(p.label)), variant: p.variant !== "default" ? q(str(p.variant)) : undefined, color: p.color !== "default" ? q(str(p.color)) : undefined, size: p.size !== "md" ? q(str(p.size)) : undefined, icon: str(p.icon) ? q(str(p.icon)) : undefined, hideChevron: bool(p.hideChevron), align: p.align === "right" ? q("right") : undefined }, ['<ListItem icon="copy" label="Duplicate" trailing="⌘D" onClick={duplicate} />', '<ListItem icon="edit" label="Rename" />', '<ListDivider />', '<ListItem icon="trash" label="Delete" danger />', ...(bool(p.nested) ? ['<SubMenu icon="arrowRight" label="Move to">\n  <ListItem label="Inbox" />\n  <ListItem label="Archive" />\n</SubMenu>'] : [])]),
     cssBlocks: ["Dropdown", "Submenu"], related: ["list", "context-menu", "select"],
@@ -374,8 +462,8 @@ export const registry: DocEntry[] = [
   },
   /* ---------------- Data ---------------- */
   {
-    slug: "avatar", name: "Avatar", group: "Data", description: "Initials or image with presence, in four sizes. Groups overlap with masked outlines.",
-    controls: { name: { type: "text", default: "Ada Lovelace" }, src: { type: "text" }, size: { type: "select", options: ["xs", "sm", "md", "lg"], default: "md" }, shape: { type: "select", options: ["circle", "square"], default: "circle" }, presence: { type: "select", options: ["", "online", "away", "busy", "offline"], default: "" }, group: { type: "boolean", doc: "Show as an AvatarGroup." } },
+    slug: "avatar", name: "Avatar", group: "Data", description: "Initials or image with presence, in six sizes. Groups overlap with masked outlines.",
+    controls: { name: { type: "text", default: "Ada Lovelace" }, src: { type: "text" }, size: { type: "select", options: ["xs", "sm", "md", "lg", "xl", "2xl"], default: "md" }, shape: { type: "select", options: ["circle", "square"], default: "circle" }, presence: { type: "select", options: ["", "online", "away", "busy", "offline"], default: "" }, group: { type: "boolean", doc: "Show as an AvatarGroup." } },
     extraProps: [{"name": "AvatarGroup", "type": "{ size?, max?, children }", "description": "Overlapping row; max collapses the rest into a +N counter."}],
     render: (p) => bool(p.group) ? <AvatarGroup size={opt(p.size, "md")} max={3}><Avatar name={str(p.name)} src={str(p.src) || undefined} presence={opt(p.presence, undefined) as never} /><Avatar name="Grace Hopper" /><Avatar name="Alan Turing" /><Avatar name="Katherine Johnson" /></AvatarGroup> : <Avatar name={str(p.name)} src={str(p.src) || undefined} size={opt(p.size, "md")} shape={opt(p.shape, "circle")} presence={opt(p.presence, undefined) as never} />,
     code: (p) => bool(p.group) ? `<AvatarGroup${p.size !== "md" ? ` size="${str(p.size)}"` : ""} max={3}>\n  <Avatar name="${str(p.name)}" />\n  <Avatar name="Grace Hopper" />\n  …\n</AvatarGroup>` : `<Avatar name="${str(p.name)}"${p.src ? ` src="${str(p.src)}"` : ""}${p.size !== "md" ? ` size="${str(p.size)}"` : ""}${p.shape === "square" ? ' shape="square"' : ""}${p.presence ? ` presence="${str(p.presence)}"` : ""} />`,
@@ -383,9 +471,9 @@ export const registry: DocEntry[] = [
   },
   {
     slug: "data-list", name: "DataList", group: "Data", description: "Label and value rows on one grid; labels share a column capped by a token.",
-    controls: { align: { type: "select", options: ["start", "end"], default: "start" }, size: { type: "select", options: ["sm", "md"], default: "md" }, gap: { type: "select", options: ["sm", "md", "lg"], default: "md" }, divided: { type: "boolean" }, icons: { type: "boolean" } },
-    render: (p) => <DataList align={opt(p.align, "start")} size={opt(p.size, "md")} gap={opt(p.gap, "md")} divided={bool(p.divided)} items={[{ icon: bool(p.icons) ? "user" : undefined, label: "Owner", value: <span className="row"><Avatar name="Ada Lovelace" size="xs" />Ada Lovelace</span> }, { icon: bool(p.icons) ? "calendar" : undefined, label: "Created", value: "March 2, 2021" }, { icon: bool(p.icons) ? "settings" : undefined, label: "Status", value: <Badge color="success" dot>Active</Badge> }]} />,
-    code: (p) => jsx("DataList", { align: p.align === "end" ? q("end") : undefined, size: p.size === "sm" ? q("sm") : undefined, gap: p.gap !== "md" ? q(str(p.gap)) : undefined, divided: bool(p.divided), items: `{[\n    { ${p.icons ? 'icon: "user", ' : ""}label: "Owner", value: <span className="row"><Avatar name="Ada Lovelace" size="xs" />Ada Lovelace</span> },\n    { ${p.icons ? 'icon: "calendar", ' : ""}label: "Created", value: "March 2, 2021" },\n    { ${p.icons ? 'icon: "settings", ' : ""}label: "Status", value: <Badge color="success" dot>Active</Badge> },\n  ]}` }),
+    controls: { align: { type: "select", options: ["start", "end"], default: "start" }, size: { type: "select", options: ["sm", "md"], default: "md" }, gap: { type: "select", options: ["sm", "md", "lg"], default: "md" }, divided: { type: "boolean" }, even: { type: "boolean", doc: "Every row the same height, so avatars and badges don't make rows uneven." }, icons: { type: "boolean" } },
+    render: (p) => <DataList align={opt(p.align, "start")} size={opt(p.size, "md")} gap={opt(p.gap, "md")} divided={bool(p.divided)} even={bool(p.even)} items={[{ icon: bool(p.icons) ? "user" : undefined, label: "Owner", value: <span className="row"><Avatar name="Ada Lovelace" size="xs" />Ada Lovelace</span> }, { icon: bool(p.icons) ? "calendar" : undefined, label: "Created", value: "March 2, 2021" }, { icon: bool(p.icons) ? "settings" : undefined, label: "Status", value: <Badge color="success" dot>Active</Badge> }]} />,
+    code: (p) => jsx("DataList", { align: p.align === "end" ? q("end") : undefined, size: p.size === "sm" ? q("sm") : undefined, gap: p.gap !== "md" ? q(str(p.gap)) : undefined, divided: bool(p.divided), even: bool(p.even), items: `{[\n    { ${p.icons ? 'icon: "user", ' : ""}label: "Owner", value: <span className="row"><Avatar name="Ada Lovelace" size="xs" />Ada Lovelace</span> },\n    { ${p.icons ? 'icon: "calendar", ' : ""}label: "Created", value: "March 2, 2021" },\n    { ${p.icons ? 'icon: "settings", ' : ""}label: "Status", value: <Badge color="success" dot>Active</Badge> },\n  ]}` }),
     extraProps: [{ name: "items", type: "{ label: ReactNode; value: ReactNode; icon?: IconName }[]", description: "Values can be any element: badges, avatars, links." }],
     cssBlocks: ["Data list"], related: ["table"],
   },
@@ -412,7 +500,7 @@ export const registry: DocEntry[] = [
     extraProps: [{"name": "value / onChange", "type": "string / (value) => void"}, {"name": "onSubmit", "type": "() => void", "description": "Enter or the Send button; Shift+Enter inserts a line."}, {"name": "tools / actions", "type": "ReactNode", "description": "Left and right toolbar slots."}, {"name": "attachments / onRemoveAttachment", "type": "AttachmentData[] / (id) => void"}, {"name": "onFiles / accept", "type": "(files: File[]) => void / string", "description": "Makes the composer a drop target."}, {"name": "allowEmpty", "type": "boolean", "description": "Submit with attachments but no text."}, {"name": "submitIcon / submitIconPosition", "type": "IconName / \"leading\" | \"trailing\""}, {"name": "focus", "type": "boolean", "description": "Focus the textarea when it turns true."}],
     render: (p) => <ComposerDemo p={p} />,
     code: (p) => `<Composer value={draft} onChange={setDraft} onSubmit={send} placeholder="${str(p.placeholder)}"${p.expanded ? " expanded" : ""}${p.attachments ? " attachments={files} onRemoveAttachment={remove}" : ""} onFiles={addFiles}${p.tools ? ' tools={<Button variant="ghost" size="sm" icon="plus" />}' : ""} />`,
-    cssBlocks: ["Composer"], related: ["chat", "toolbar", "drop-zone"],
+    cssBlocks: ["Composer"], related: ["chat", "toolbar", "drop-zone"], previewAlign: "end",
   },
   {
     slug: "chat", name: "Chat", group: "Conversation", description: "Message list with arrivals animating in, hover details, attachments, citations, tasks and a composer.",
@@ -445,7 +533,7 @@ export const registry: DocEntry[] = [
     render: () => <Questionnaire questions={[{ id: "brewer", prompt: "Which brewer are you using?", description: "The device you made this cup with.", options: ["V60", "Kalita Wave", "Chemex"], allowOther: true }, { id: "scale", prompt: "Do you weigh the coffee?", type: "boolean" }, { id: "taste", prompt: "Which describes the cup best?", layout: "list", options: ["Sharp and sour from the first sip", "Sour at first, sweeter as it cools", "Mostly flat"] }]} onSubmit={() => {}} />,
     code: () => `const questions: Question[] = [\n  { id: "brewer", prompt: "Which brewer are you using?", options: ["V60", "Kalita Wave", "Chemex"], allowOther: true },\n  { id: "scale", prompt: "Do you weigh the coffee?", type: "boolean" },\n  { id: "taste", prompt: "Which describes the cup best?", layout: "list", options: ["Sharp and sour", "Sour then sweet", "Mostly flat"] },\n];\n\n` + jsx("Questionnaire", { questions: "{questions}", onSubmit: '{(answers) => {\n    // answers: { brewer: "V60", scale: "Yes", taste: "Sour then sweet" } keyed by question id\n    send(answers);\n  }}', onCancel: "{() => setShowQuestions(false)}" }),
     extraProps: [{ name: "questions", type: "Question[]", description: "id, prompt, description?, type ('choice' | 'boolean'), options?, allowOther?, layout ('inline' | 'list')." }, { name: "onSubmit", type: "(answers: Record<string, string>) => void", description: "Called from the review step with every answer keyed by question id." }, { name: "onCancel", type: "() => void", description: "Shows a dismiss button; called with no arguments when clicked." }, { name: "submitLabel", type: "string", default: '"Send answers"' }],
-    cssBlocks: ["Questionnaire"], related: ["chat", "choice"],
+    cssBlocks: ["Questionnaire"], related: ["chat", "choice"], previewAlign: "end",
   },
   /* ---------------- Docs ---------------- */
   {
@@ -463,14 +551,6 @@ export const registry: DocEntry[] = [
     render: (p) => <Text>Run <code className="code">{str(p.children)}</code> to get started.</Text>,
     code: (p) => `<code className="code">${str(p.children)}</code>`,
     cssBlocks: ["Code"], related: ["code-block"],
-  },
-  {
-    slug: "side-nav", name: "SideNav", group: "Docs", description: "Sectioned navigation built from List and ListItem links, with a filter input.",
-    controls: { title: { type: "text", default: "Docs" } },
-    extraProps: [{"name": "groups", "type": "{ title, items: { href, label, trailing? }[] }[]"}],
-    render: (p) => <div style={{ maxWidth: 240 }}><SideNav title={str(p.title)} groups={[{ title: "Foundations", items: [{ href: "#overview", label: "Overview" }, { href: "#tokens", label: "Design tokens" }] }, { title: "Actions", items: [{ href: "#button", label: "Button" }, { href: "#toolbar", label: "Toolbar", trailing: "new" }] }]} /></div>,
-    code: (p) => `<SideNav title="${str(p.title)}" groups={[{ title: "Foundations", items: [{ href: "/", label: "Overview" }] }, …]} />`,
-    cssBlocks: ["List (also used as dropdown menu)"], related: ["list"],
   },
   {
     slug: "props-table", name: "PropsTable", group: "Docs", description: "Documentation table of a component's props.",

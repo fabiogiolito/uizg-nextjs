@@ -132,6 +132,8 @@
   --container-max-width: 1280px;
   --avatar-size: var(--control-height);
   --avatar-size-xs: 20px;
+  --avatar-size-xl: 64px;
+  --avatar-size-2xl: 128px;
   --avatar-overlap: calc(var(--avatar-size) * 0.3);
   /* Gap cut out of an avatar where the next avatar or the presence dot overlaps it. */
   --avatar-outline: 2px;

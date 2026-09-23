@@ -26,6 +26,8 @@ export function List({ bordered, role = "list", className, children }: ListProps
 
 export type ListItemProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children" | "color"> & {
   icon?: IconName;
+  /** Any element before the label, e.g. an Avatar. */
+  leading?: ReactNode;
   label: ReactNode;
   description?: ReactNode;
   /** Rendered at the end of the row, e.g. a keyboard shortcut. */
@@ -43,7 +45,7 @@ export type ListItemProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "child
   defaultExpanded?: boolean;
 };
 
-export function ListItem({ icon, label, description, trailing, trailingIcon, selected, danger, children, collapsible, defaultExpanded = true, href, className, onClick, ...rest }: ListItemProps) {
+export function ListItem({ icon, leading, label, description, trailing, trailingIcon, selected, danger, children, collapsible, defaultExpanded = true, href, className, onClick, ...rest }: ListItemProps) {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const hasChildren = children !== undefined && children !== null && children !== false;
   const item = (
@@ -51,6 +53,7 @@ export function ListItem({ icon, label, description, trailing, trailingIcon, sel
       variant="ghost"
       block
       icon={icon}
+      leading={leading}
       trailingIcon={trailingIcon}
       trailing={
         collapsible && hasChildren ? (
@@ -102,15 +105,22 @@ export function ListItem({ icon, label, description, trailing, trailingIcon, sel
 export type ListSectionProps = {
   /** Optional uppercase heading shown above the items. */
   title?: ReactNode;
+  /** Shown at the end of the heading row, e.g. a count or a date. */
+  trailing?: ReactNode;
   className?: string;
   children: ReactNode;
 };
 
 /** Groups items under a heading. Consecutive sections are separated by a divider automatically. */
-export function ListSection({ title, className, children }: ListSectionProps) {
+export function ListSection({ title, trailing, className, children }: ListSectionProps) {
   return (
     <div role="group" className={cx("list__section", className)}>
-      {title && <div className="list__heading">{title}</div>}
+      {(title || trailing) && (
+        <div className="list__heading">
+          <span className="list__heading-text">{title}</span>
+          {trailing && <span className="list__heading-trailing">{trailing}</span>}
+        </div>
+      )}
       {children}
     </div>
   );
@@ -118,6 +128,10 @@ export function ListSection({ title, className, children }: ListSectionProps) {
 
 export function ListDivider() {
   return <hr className="list__divider" />;
+}
+
+export function ListText({ children }: { children: ReactNode }) {
+  return <div className="list__text">{children}</div>;
 }
 
 export function ListHeading({ children }: { children: ReactNode }) {

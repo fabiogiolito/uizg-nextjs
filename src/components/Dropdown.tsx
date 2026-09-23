@@ -33,8 +33,8 @@ export type DropdownProps = {
   hideChevron?: boolean;
   /** Which edge of the trigger the menu aligns to. */
   align?: "left" | "right";
-  /** Where the menu opens: below the trigger, or beside it (for nested menus). */
-  side?: "bottom" | "right";
+  /** Where the menu opens: below the trigger, above it, or beside it (for nested menus). */
+  side?: "bottom" | "top" | "right";
   /** Also open while hovering the trigger or the menu. */
   openOnHover?: boolean;
   /** Accessible label for icon-only triggers. */
@@ -93,11 +93,9 @@ export function Dropdown({
       const top = Math.max(0, Math.min(rect.top, window.innerHeight - height - gap));
       setPos({ top, left });
     } else {
-      setPos(
-        align === "right"
-          ? { top: rect.bottom + gap, right: window.innerWidth - rect.right }
-          : { top: rect.bottom + gap, left: rect.left },
-      );
+      const height = menuRef.current?.getBoundingClientRect().height ?? 0;
+      const top = side === "top" ? Math.max(0, rect.top - gap - height) : rect.bottom + gap;
+      setPos(align === "right" ? { top, right: window.innerWidth - rect.right } : { top, left: rect.left });
     }
   }, [open, align, side, measured]);
 
@@ -163,7 +161,7 @@ export function Dropdown({
         <div
           id={menuId}
           ref={menuRef}
-          className={cx("dropdown__menu", align === "right" && "dropdown__menu--right", side === "right" && "dropdown__menu--side", measured && "dropdown__menu--measured")}
+          className={cx("dropdown__menu", align === "right" && "dropdown__menu--right", side === "right" && "dropdown__menu--side", side === "top" && "dropdown__menu--top", measured && "dropdown__menu--measured")}
           style={{ ...pos, ...(measured ? {} : { positionAnchor: anchorName }) } as CSSProperties}
           onClick={(e) => {
             if ((e.target as HTMLElement).closest(".list__item")) setOpen(false);

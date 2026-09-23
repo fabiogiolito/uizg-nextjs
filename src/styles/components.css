@@ -89,6 +89,8 @@ body {
 .button__content:has(.text-pair) { align-items: flex-start; }
 .button__content:has(.text-pair) > .button__trailing { align-self: center; }
 .button__icon { display: flex; align-items: center; height: calc(1em * var(--line-height)); color: currentColor; }
+.button__leading { display: flex; flex: none; }
+.button__content:has(.text-pair) > .button__leading { align-self: center; }
 .button__label { display: flex; align-items: center; gap: var(--inline-gap); min-width: 0; white-space: nowrap; }
 .button__trailing { display: flex; align-items: center; margin-inline-start: auto; padding-inline-start: var(--space-3); font-family: var(--font-secondary); font-size: var(--font-size-sm); color: var(--color-text-subtle); }
 /* A pill at the end of a button reads as extra right padding, pull it in. */
@@ -660,6 +662,11 @@ body {
   .badge--fill { color: var(--color-bg); }
 }
 
+/* ---- Steps ---- */
+.steps { display: inline-flex; align-items: center; gap: var(--space-1); }
+.steps__dot { width: var(--steps-dot-size, 10px); height: var(--steps-dot-size, 10px); border-radius: var(--radius-full); background: var(--color-border-strong); transition: background var(--duration) var(--easing); }
+.steps__dot--done { background: var(--color-primary); }
+
 /* ---- Banner ----
    Card-shaped message using the badge color scheme. --banner-accent is set by the color, the
    variant decides where it goes. The flat tint is the default, as in the mockup. */
@@ -717,10 +724,12 @@ body {
 
 /* ---- Card ---- */
 .card {
+  --card-pad-x: var(--card-padding);
+  --card-pad-y: var(--card-padding);
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  padding: var(--card-padding);
+  padding: var(--card-pad-y) var(--card-pad-x);
   background: var(--color-raised);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-lg);
@@ -730,18 +739,32 @@ body {
 .card--ghost { background: transparent; border-color: transparent; box-shadow: none; }
 .card--grow { flex: 1; min-width: 0; }
 /* Padding sizes, all sides or per axis. Per-axis rules come last so they win. */
-.card--sm { padding: calc(var(--card-padding) * 0.5); }
-.card--lg { padding: calc(var(--card-padding) * 1.5); }
-.card--x-sm { padding-inline: calc(var(--card-padding) * 0.5); }
-.card--x-md { padding-inline: var(--card-padding); }
-.card--x-lg { padding-inline: calc(var(--card-padding) * 1.5); }
-.card--y-sm { padding-block: calc(var(--card-padding) * 0.5); }
-.card--y-md { padding-block: var(--card-padding); }
-.card--y-lg { padding-block: calc(var(--card-padding) * 1.5); }
+.card--sm { --card-pad-x: calc(var(--card-padding) * 0.5); --card-pad-y: calc(var(--card-padding) * 0.5); }
+.card--lg { --card-pad-x: calc(var(--card-padding) * 1.5); --card-pad-y: calc(var(--card-padding) * 1.5); }
+.card--x-sm { --card-pad-x: calc(var(--card-padding) * 0.5); }
+.card--x-md { --card-pad-x: var(--card-padding); }
+.card--x-lg { --card-pad-x: calc(var(--card-padding) * 1.5); }
+.card--y-sm { --card-pad-y: calc(var(--card-padding) * 0.5); }
+.card--y-md { --card-pad-y: var(--card-padding); }
+.card--y-lg { --card-pad-y: calc(var(--card-padding) * 1.5); }
 .card__header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--inline-gap); }
 .card__title { flex: 1; }
 .card__body { line-height: var(--line-height-relaxed); }
 .card__footer { display: flex; gap: var(--inline-gap); justify-content: flex-end; }
+/* Sections: the outer card drops its padding and lays out header, child cards and footer as divided
+   bands, each keeping its own padding and background. A grow section fills the remaining space and
+   scrolls, so give the outer card a height (column) or let it fill its width (row). */
+.card--sections { padding: 0; gap: 0; overflow: hidden; }
+.card--sections > .card__header, .card--sections > .card__footer { padding: var(--card-pad-y) var(--card-pad-x); }
+.card--sections > .card { flex: none; border: 0; border-radius: 0; box-shadow: none; }
+/* After the card reset so the divider wins on section cards too. */
+.card--sections > :not(:first-child) { border-top: var(--border-width) solid var(--color-border); }
+.card--sections > .card--grow { flex: 1; min-height: 0; overflow-y: auto; }
+/* Row: sections sit side by side with the divider on the inline edge. Header and footer, if any, still span the full width. */
+.card--sections-row { flex-direction: row; flex-wrap: wrap; }
+.card--sections-row > .card__header, .card--sections-row > .card__footer { flex-basis: 100%; }
+.card--sections-row > .card + .card { border-top: 0; border-inline-start: var(--border-width) solid var(--color-border); }
+.card--sections-row > .card--grow { min-width: 0; min-height: auto; overflow-y: visible; }
 
 /* ---- Text pair (title + description, tighter than stack spacing) ---- */
 .text-pair { display: flex; flex-direction: column; gap: var(--text-pair-gap); min-width: 0; }
@@ -780,10 +803,15 @@ body {
 .list__child:has(> .list__child-content > .list__node > .list__item--selected) > .list__guide { background: var(--color-primary); }
 .list__toggle { color: var(--color-text-subtle); transition: transform var(--duration) var(--easing); transform: rotate(-90deg); }
 .list__toggle--expanded { transform: none; }
+/* Plain text row, e.g. the account under a "Logged in as" heading. */
+.list__text { padding: 0 var(--button-h-padding) var(--space-1); font-size: var(--font-size-sm); color: var(--color-text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .list__divider { border: 0; border-top: var(--border-width) solid var(--color-border); margin: var(--space-1) 0; }
 .list__section { display: flex; flex-direction: column; gap: var(--list-gap); }
 .list__section + .list__section { margin-top: var(--space-1); padding-top: var(--space-1); border-top: var(--border-width) solid var(--color-border); }
-.list__heading { padding: var(--space-2) var(--button-h-padding) var(--space-1); font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); letter-spacing: var(--letter-spacing-wide); text-transform: uppercase; color: var(--color-text-subtle); }
+.list__heading { display: flex; align-items: baseline; gap: var(--space-2); padding: var(--space-2) var(--button-h-padding) var(--space-1); font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); letter-spacing: var(--letter-spacing-wide); text-transform: uppercase; color: var(--color-text-subtle); }
+
+.list__heading-text { flex: 1; min-width: 0; }
+.list__heading-trailing { text-transform: none; letter-spacing: normal; font-weight: var(--font-weight-regular); }
 
 /* ---- Dropdown ---- */
 .dropdown { position: relative; display: inline-flex; }
@@ -802,6 +830,8 @@ body {
   animation: dropdown-in var(--duration) var(--easing);
 }
 .dropdown__menu--right { position-area: block-end span-inline-start; }
+.dropdown__menu--top { position-area: block-start span-inline-end; }
+.dropdown__menu--top.dropdown__menu--right { position-area: block-start span-inline-start; }
 .dropdown > .button > .button__content > .button__label { flex: 1; }
 /* Chevrons always point down; the open state is shown by the menu itself. */
 .dropdown__chevron { transition: transform var(--duration) var(--easing); }
@@ -917,6 +947,8 @@ body {
 .avatar--xs { --avatar-size: var(--avatar-size-xs); font-size: var(--font-size-xs); }
 .avatar--sm { --avatar-size: var(--control-height-sm); }
 .avatar--lg { --avatar-size: var(--control-height-lg); }
+.avatar--xl { --avatar-size: var(--avatar-size-xl); }
+.avatar--2xl { --avatar-size: var(--avatar-size-2xl); }
 .avatar--square { --avatar-radius: var(--radius); }
 .avatar__body {
   display: flex;
@@ -946,6 +978,11 @@ body {
 .avatar__presence--away { background: var(--color-warning); }
 .avatar__presence--busy { background: var(--color-danger); }
 .avatar__presence--offline { background: transparent; box-shadow: inset 0 0 0 calc(var(--presence-size) * 0.2) var(--color-text-subtle); }
+/* A badge (e.g. a logo) hangs off the bottom-right corner, in the avatar's shape, with a background-colored
+   border separating it from the avatar. */
+.avatar__badge { --avatar-badge-size: calc(var(--avatar-size) * 0.45); position: absolute; right: calc(var(--avatar-outline) * -2); bottom: calc(var(--avatar-outline) * -1); display: flex; box-sizing: content-box; width: var(--avatar-badge-size); height: var(--avatar-badge-size); border: var(--avatar-outline) solid var(--color-raised); border-radius: calc(var(--avatar-radius) * 0.6); overflow: hidden; }
+.avatar--badge:not(.avatar--square) .avatar__badge { border-radius: var(--radius-full); }
+.avatar__badge > * { width: 100%; height: 100%; object-fit: cover; }
 .avatar--presence .avatar__body {
   mask: radial-gradient(
     circle at calc(100% - var(--presence-size) / 2) calc(100% - var(--presence-size) / 2),
@@ -1090,6 +1127,16 @@ body:has(.modal[open]) { overflow: hidden; }
 .questionnaire__answers { display: flex; flex-direction: column; }
 .questionnaire__other { padding-top: var(--space-3); }
 .questionnaire .card__body { line-height: var(--line-height); }
+/* Step changes run as a view transition (see Questionnaire.tsx): the card group morphs size,
+   the body slides and fades in the direction of travel. */
+::view-transition-group(.questionnaire), ::view-transition-group(.questionnaire-body) { animation-duration: var(--duration-slow); animation-timing-function: var(--easing); }
+::view-transition-old(.questionnaire-body), ::view-transition-new(.questionnaire-body) { animation: var(--duration) var(--easing) both; height: auto; }
+::view-transition-old(.questionnaire-body) { animation-name: questionnaire-out; }
+::view-transition-new(.questionnaire-body) { animation-name: questionnaire-in; animation-delay: calc(var(--duration) / 2); }
+/* Going back flips the direction of travel. */
+:root[data-questionnaire-dir="back"] { --questionnaire-flip: -1; }
+@keyframes questionnaire-out { to { opacity: 0; translate: calc(var(--space-3) * -1 * var(--questionnaire-flip, 1)) 0; } }
+@keyframes questionnaire-in { from { opacity: 0; translate: calc(var(--space-3) * var(--questionnaire-flip, 1)) 0; } }
 
 /* ---- Citations ----
    Inline markers and the list share one CSS counter, reset per message, so the numbers match. */
@@ -1154,13 +1201,16 @@ a.citations__title:hover { text-decoration: underline; text-underline-offset: 2p
 /* The main chat composer gets a larger shadow so it stands out from the messages. */
 .chat__composer { box-shadow: var(--shadow-lg); }
 .chat__composer:focus-within { box-shadow: var(--shadow-lg), var(--focus-ring); }
-.composer__input { width: 100%; min-height: var(--control-height-lg); max-height: 240px; padding: var(--space-3) var(--space-4); font: inherit; line-height: var(--line-height-relaxed); color: var(--color-text); background: transparent; border: 0; outline: none; resize: none; field-sizing: content; }
+.composer__input { width: 100%; min-height: var(--control-height-lg); max-height: 240px; padding: var(--space-3) var(--space-4); font: inherit; line-height: var(--line-height-relaxed); color: var(--color-text); background: transparent; border: 0; outline: none; resize: none; field-sizing: content; transition: min-height var(--duration) var(--easing); }
 .composer__input::placeholder { color: var(--color-text-subtle); }
 .composer:focus-within .composer__input, .composer--active .composer__input { min-height: calc(var(--font-size-base) * var(--line-height-relaxed) * 3 + var(--space-3) * 2); }
 .composer__attachments { display: flex; flex-wrap: wrap; gap: var(--space-2); padding: 0 var(--space-3) var(--space-2); }
-.composer__toolbar { display: none; padding: 0 var(--space-2) var(--space-2); }
+/* Toolbar height animates like Reveal: a grid row from 0fr to 1fr. */
+.composer__toolbar { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--duration) var(--easing); }
+.composer__toolbar > * { min-height: 0; overflow: clip; overflow-clip-margin: var(--space-1); padding: 0 var(--space-2); transition: padding-bottom var(--duration) var(--easing); }
 .composer__drop > .drop-zone__overlay { border-radius: var(--radius-lg); }
-.composer:focus-within .composer__toolbar, .composer--active .composer__toolbar { display: block; }
+.composer:focus-within .composer__toolbar, .composer--active .composer__toolbar { grid-template-rows: 1fr; }
+.composer:focus-within .composer__toolbar > *, .composer--active .composer__toolbar > * { padding-bottom: var(--space-2); }
 
 /* ---- Attachment ---- */
 .attachment {
@@ -1264,6 +1314,9 @@ button.attachment:focus-visible { outline: none; box-shadow: var(--focus-ring); 
 .data-list--divided.data-list--gap-lg .data-list__label, .data-list--divided.data-list--gap-lg .data-list__value { --data-row-pad: var(--space-3); }
 .data-list--divided .data-list__label { padding-top: calc(var(--data-row-pad) + (1em * var(--line-height) - var(--font-size-sm) * var(--line-height)) / 2); }
 .data-list--divided .data-list__row:last-child > * { border-bottom: 0; }
+/* Even rows: fixed control height with everything vertically centered, so avatars and badges don't change row height. */
+.data-list--even .data-list__label, .data-list--even .data-list__value { display: flex; align-items: center; min-height: var(--control-height-sm); padding-top: var(--data-row-pad, 0); }
+.data-list--even .data-list__icon { margin-top: 0; }
 
 /* ---- Toast ----
    The toaster hugs its corner with padding, so nothing clips shadows. Non-urgent toasts sit on a
@@ -1337,6 +1390,123 @@ button.attachment:focus-visible { outline: none; box-shadow: var(--focus-ring); 
 .toast .toast__dismiss { position: absolute; top: calc(var(--space-2) * -1); right: calc(var(--space-2) * -1); min-height: 0; width: calc(var(--icon-size) + var(--space-2)); height: calc(var(--icon-size) + var(--space-2)); border-radius: var(--radius-full); color: var(--color-text-muted); background: var(--color-raised); border: var(--border-width) solid var(--color-border); box-shadow: var(--shadow-sm); opacity: 0; transition: opacity var(--duration) var(--easing); }
 .toast:hover .toast__dismiss, .toast:focus-within .toast__dismiss { opacity: 1; }
 .toast .toast__dismiss:hover { background: var(--color-surface-hover); color: var(--color-text); }
+
+/* ---- Board ----
+   Columns side by side, each a sectioned Card with a fixed header and a scrolling body. Items are
+   draggable rows; a column being dragged over gets a tint. Collapsed columns are a narrow rail
+   with the title rotated, and still accept drops. */
+/* Bottom padding with a matching negative margin: the horizontal scrollbar gets room without moving the columns. */
+.board { display: flex; align-items: stretch; gap: var(--space-4); height: 100%; min-height: 0; padding-bottom: var(--space-4); margin-bottom: calc(var(--space-4) * -1); overflow-x: auto; }
+.board__column { flex: 1 0 var(--board-column-min-width, 280px); min-width: var(--board-column-min-width, 280px); transition: background var(--duration) var(--easing), border-color var(--duration) var(--easing), flex-basis var(--duration-slow) var(--easing), min-width var(--duration-slow) var(--easing), margin var(--duration-slow) var(--easing), opacity var(--duration) var(--easing); }
+/* Focused board: every other column shrinks to nothing and fades, pulling the focused one into place. */
+.board__column--hidden { flex: 0 0 0px; min-width: 0; width: 0; margin-inline-start: calc(var(--space-4) * -1); opacity: 0; overflow: hidden; pointer-events: none; }
+.board--focused { overflow-x: hidden; }
+.board__column--over { border-color: var(--color-primary); background: var(--color-primary-soft); }
+.board__column-header { --card-pad-y: var(--space-2); gap: var(--space-2); }
+.board__column-row { display: flex; align-items: center; gap: var(--space-2); min-height: var(--control-height-sm); }
+.board__column-icon { flex: none; color: var(--color-text); }
+.board__column-title { font-weight: var(--font-weight-medium); }
+.board__column-count { color: var(--color-text-subtle); font-variant-numeric: tabular-nums; }
+/* Actions appear on hover or focus, pushed to the end of the row. */
+.board__column-actions { display: flex; align-items: center; gap: var(--space-1); margin-inline-start: auto; opacity: 0; transition: opacity var(--duration) var(--easing); }
+.board__column:hover .board__column-actions, .board__column:focus-within .board__column-actions, .board__column-actions:has([aria-expanded="true"]) { opacity: 1; }
+/* Body inset minus the item padding, so avatars and labels sit 16px from the edge, on the header's keyline. */
+.board__column-body { padding: var(--space-2) calc(var(--card-pad-x) - var(--space-2)); }
+/* The body Card wraps children in .card__body, so these are descendant selectors. */
+.board__column-body .list { --list-gap: var(--space-2); padding: 0; }
+/* Collapsed rail. */
+.board__column--collapsed { flex: none; width: auto; min-width: auto; padding: var(--space-4) var(--space-3); background: transparent; cursor: pointer; }
+/* The card body holds the rail content: icon and count stacked at the top, the rotated title pushed to the bottom. */
+.board__column--collapsed > .card__body { display: flex; flex: 1; flex-direction: column; align-items: center; gap: var(--space-2); min-height: 0; }
+.board__column--collapsed .board__column-count { font-size: var(--font-size-sm); }
+.board__column-title--vertical { margin-top: auto; writing-mode: vertical-rl; transform: rotate(180deg); color: var(--color-text-muted); white-space: nowrap; }
+/* Items: one padded block covering the row and the note, so hover, selection and the accent bar span all of it. */
+.board__item { position: relative; display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-2); border-radius: var(--radius); transition: background var(--duration) var(--easing); }
+.board__item--clickable { cursor: pointer; }
+.board__item--draggable:active { cursor: grabbing; }
+.board__item:hover { background: var(--color-surface-hover); }
+.board__item--selected { background: var(--color-primary-soft); }
+.board__item--selected:hover { background: var(--color-primary-soft-hover); }
+.board__item--clickable:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.board__item--dragging { opacity: 0.4; }
+.board__item--accent::before { content: ""; position: absolute; top: 0; bottom: 0; left: calc(var(--space-1) * -1); width: 2px; border-radius: var(--radius-full); background: var(--color-primary); }
+.board__item-row { display: flex; align-items: center; gap: var(--inline-gap); min-width: 0; }
+.board__item-text { flex: 1; }
+/* Both lines truncate; the note below may wrap. */
+.board__item-text .text-pair__title, .board__item-text .text-pair__description { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.board__item-trailing { flex: none; display: flex; align-items: center; color: var(--color-text-subtle); font-size: var(--font-size-sm); }
+.board__note { margin: 0; font-size: var(--font-size-sm); font-style: italic; line-height: var(--line-height); color: var(--color-text-muted); }
+
+/* ---- Split ----
+   Primary content plus an optional pane on the end side. The pane width is a grid track, clamped
+   between min and max, so opening and closing animate the track while the pane fades. */
+.split { --split-size: 40%; display: grid; grid-template-columns: minmax(var(--split-min-primary), 1fr) 0px; height: 100%; min-height: 0; transition: grid-template-columns var(--duration-slow) var(--easing); }
+.split--open { grid-template-columns: minmax(var(--split-min-primary), 1fr) clamp(var(--split-min), var(--split-size), min(var(--split-max), 100% - var(--split-min-primary))); }
+.split--dragging { transition: none; user-select: none; }
+.split__primary { min-width: 0; min-height: 0; overflow: auto; }
+.split__pane { position: relative; min-width: 0; min-height: 0; border-inline-start: var(--border-width) solid var(--color-border); opacity: 0; transition: opacity var(--duration) var(--easing); }
+.split--open .split__pane { opacity: 1; transition-delay: calc(var(--duration-slow) / 2); }
+.split__pane-content { height: 100%; overflow: auto; }
+/* Drag handle straddling the divider line, highlighted on hover and while dragging. */
+.split__divider { position: absolute; top: 0; bottom: 0; left: calc(var(--space-1) * -1); width: var(--space-2); cursor: col-resize; touch-action: none; z-index: 1; }
+.split__divider::after { content: ""; position: absolute; inset: 0 calc(var(--space-1) - 1px); background: var(--color-primary); opacity: 0; transition: opacity var(--duration) var(--easing); }
+.split__divider:hover::after, .split--dragging .split__divider::after { opacity: 1; }
+
+/* ---- Side nav ----
+   A navigation column that fills its container's height. Header and footer stay put, the body scrolls.
+   The nav is the slot in the layout; the panel inside draws the content, so it can peek wider on hover
+   without pushing the page. Width lives in --side-nav-width so collapsing and resizing change one value. */
+.side-nav { --side-nav-width: 240px; --side-nav-expanded-width: 240px; position: relative; width: var(--side-nav-width); height: 100%; transition: width var(--duration-slow) var(--easing); }
+.side-nav__panel { position: absolute; inset: 0; width: 100%; display: flex; flex-direction: column; background: var(--color-surface); border-inline-end: var(--border-width) solid var(--color-border); transition: width var(--duration-slow) var(--easing), box-shadow var(--duration-slow) var(--easing); }
+.side-nav--borderless .side-nav__panel { border-inline-end-color: transparent; }
+/* Without the edge border the dividers are inset to the content width, like the design's floating nav. */
+.side-nav--borderless .side-nav__header, .side-nav--borderless .side-nav__footer { border-color: transparent; }
+.side-nav--borderless .side-nav__header::after, .side-nav--borderless .side-nav__footer::before { content: ""; position: absolute; inset-inline: var(--space-4); height: var(--border-width); background: var(--color-border); }
+.side-nav--borderless .side-nav__header::after { bottom: calc(var(--border-width) * -1); }
+.side-nav--borderless .side-nav__footer { position: relative; }
+.side-nav--borderless .side-nav__footer::before { top: calc(var(--border-width) * -1); }
+.side-nav--dragging, .side-nav--dragging .side-nav__panel { transition: none; user-select: none; }
+.side-nav__header, .side-nav__footer { flex: none; padding: var(--space-4); }
+.side-nav__header { position: relative; border-bottom: var(--border-width) solid var(--color-border); }
+.side-nav__header-content { display: flex; flex-direction: column; gap: var(--space-3); }
+/* The toggle floats over the header's top right, centered on a title-sized first line, so it never narrows the rows below. */
+.side-nav__toggle { position: absolute; top: calc(var(--space-4) + (var(--font-size-title) * var(--line-height) - var(--control-height-sm)) / 2); right: var(--space-3); color: var(--color-text-subtle); }
+.side-nav__header:has(.side-nav__toggle) .side-nav__header-content > :first-child { padding-inline-end: var(--control-height-sm); }
+.side-nav__body { flex: 1; min-height: 0; overflow-y: auto; padding: var(--space-4); }
+/* No list inset here: items share the header controls' edge, so icons and labels line up down the column. */
+.side-nav__body > .list { padding: 0; }
+/* Labels truncate rather than wrap: a nav row is one line. */
+.side-nav .list__item .button__label { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.side-nav__footer { padding-block: var(--space-2); border-top: var(--border-width) solid var(--color-border); }
+/* A full-width footer button (the account row) gets extra vertical padding so an avatar inside it has room. */
+.side-nav__footer .button--block { padding-block: var(--space-1); }
+/* Rail: collapsed and not peeking open. Everything stays mounted so state survives; text is hidden and
+   each control shrinks to its icon (or avatar), centered in the column. Nested items are hidden. */
+.side-nav--collapsed:not(.side-nav--peek:hover) .side-nav__header { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); padding-inline: var(--space-2); }
+.side-nav--collapsed:not(.side-nav--peek:hover) .side-nav__toggle { position: static; order: -1; }
+.side-nav--collapsed:not(.side-nav--peek:hover) .side-nav__header-content { align-items: center; }
+.side-nav--collapsed:not(.side-nav--peek:hover) .side-nav__header-content > .text { display: none; }
+.side-nav--collapsed:not(.side-nav--peek:hover) .side-nav__header-content > :first-child { padding-inline-end: 0; }
+.side-nav--collapsed:not(.side-nav--peek:hover) .input { width: var(--control-height-sm); padding: 0; justify-content: center; }
+.side-nav--collapsed:not(.side-nav--peek:hover) .input__control, .side-nav--collapsed:not(.side-nav--peek:hover) .input__addon { display: none; }
+.side-nav--collapsed:not(.side-nav--peek:hover) .side-nav__body, .side-nav--collapsed:not(.side-nav--peek:hover) .side-nav__footer { padding-inline: var(--space-2); }
+.side-nav--collapsed:not(.side-nav--peek:hover) .list { align-items: center; }
+.side-nav--collapsed:not(.side-nav--peek:hover) .button--block { display: inline-flex; width: var(--control-height); justify-content: center; padding-inline: 0; }
+.side-nav--collapsed:not(.side-nav--peek:hover) .button--block .button__content { flex: none; gap: 0; }
+/* Text in a block button disappears; an avatar inside keeps its own size. */
+.side-nav--collapsed:not(.side-nav--peek:hover) .button--block .button__label { flex: none; font-size: 0; gap: 0; }
+/* Whatever wraps the footer button (a row, a dropdown) centers it in the rail. */
+.side-nav--collapsed:not(.side-nav--peek:hover) .side-nav__footer .row, .side-nav--collapsed:not(.side-nav--peek:hover) .side-nav__footer .dropdown { justify-content: center; }
+.side-nav--collapsed:not(.side-nav--peek:hover) .button__trailing, .side-nav--collapsed:not(.side-nav--peek:hover) .list__children, .side-nav--collapsed:not(.side-nav--peek:hover) .side-nav__footer .button:not(.button--block) { display: none; }
+/* Peek: hovering the collapsed rail widens the panel over the page. */
+.side-nav--collapsed .side-nav__panel { overflow: hidden; }
+.side-nav--peek:hover .side-nav__panel { width: var(--side-nav-expanded-width); box-shadow: var(--shadow-lg); z-index: 20; }
+/* While peeking, sections are laid out at the full width right away and the widening panel reveals them, so nothing reflows mid-animation. */
+.side-nav--peek:hover .side-nav__header, .side-nav--peek:hover .side-nav__body, .side-nav--peek:hover .side-nav__footer { width: var(--side-nav-expanded-width); }
+/* Drag handle on the right edge, like a table column resizer. */
+.side-nav__resizer { position: absolute; top: 0; right: calc(var(--space-1) * -1); width: var(--space-2); height: 100%; cursor: col-resize; touch-action: none; z-index: 1; }
+.side-nav__resizer::after { content: ""; position: absolute; inset: 0 calc(var(--space-1) - 1px); background: var(--color-primary); opacity: 0; transition: opacity var(--duration) var(--easing); }
+.side-nav__resizer:hover::after, .side-nav--dragging .side-nav__resizer::after { opacity: 1; }
 
 /* ---- Layout helpers ---- */
 .stack { display: flex; flex-direction: column; gap: var(--stack-gap); }

@@ -54,7 +54,7 @@ function PlaygroundInner({ entry }: { entry: DocEntry }) {
   return (
     <div className="playground">
       <div className="playground__main">
-        <div className={cx("playground__preview", entry.previewOn === "surface" && "playground__preview--surface")}>
+        <div className={cx("playground__preview", entry.previewOn === "surface" && "playground__preview--surface", entry.previewAlign === "end" && "playground__preview--end", entry.previewFlush && "playground__preview--flush")}>
           <div ref={previewRef} className="playground__stage">
             {entry.render(props)}
           </div>
