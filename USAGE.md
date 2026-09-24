@@ -50,6 +50,9 @@ Edit it here, check it on the docs site, and the consumer picks it up. Bump `ver
 
 ## Changes
 
+### 0.8.7
+- BoardColumn spaces its children itself, so BoardItems placed directly in a column (without a List) get the 4px gap too.
+
 ### 0.8.6
 - Board items are 4px apart.
 

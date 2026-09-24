@@ -1459,6 +1459,8 @@ button.attachment:focus-visible { outline: none; box-shadow: var(--focus-ring); 
 /* Body inset minus the item padding, so avatars and labels sit 16px from the edge, on the header's keyline. */
 .board__column-body { padding: var(--space-2) calc(var(--card-pad-x) - var(--space-2)); }
 /* The body Card wraps children in .card__body, so these are descendant selectors. */
+/* The body itself spaces its children, so bare BoardItems, a List, or ListSections all get the same 4px. */
+.board__column-body > .card__body { display: flex; flex-direction: column; gap: var(--space-1); }
 .board__column-body .list { --list-gap: var(--space-1); padding: 0; }
 /* Collapsed rail. */
 .board__column--collapsed { flex: none; width: auto; min-width: auto; padding: var(--space-4) var(--space-3); background: transparent; cursor: pointer; }

@@ -50,7 +50,7 @@ export type BoardColumnProps = {
   defaultCollapsed?: boolean;
   onCollapsedChange?: (collapsed: boolean) => void;
   className?: string;
-  /** Usually BoardItems, optionally inside ListSections. */
+  /** BoardItems, directly or grouped in ListSections (inside a List). Either way they are 4px apart. */
   children?: ReactNode;
 };
 
