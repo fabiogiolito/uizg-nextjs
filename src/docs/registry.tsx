@@ -4,7 +4,7 @@ import {
   Attachment, Autocomplete, Avatar, AvatarGroup, Badge, Banner, Blockquote, Button, ButtonGroup, Card, Chat, Checkbox, Choice,
   Citations, Cite, CodeBlock, Collapsible, CollapsibleGroup, ColorPicker, ContextMenu, CopyButton, DataList, Divider,
   Dropdown, DropZone, Frame, HoverCard, Icon, Input, Field, List, ListDivider, ListItem, ListSection, ListText, Questionnaire, Radio,
-  ActionBar, Segmented, Select, Shimmer, Slider, Spinner, Steps, SubMenu, Swatch, Switch, Tabs, TaskList, Text, TextPair, Toaster, toast,
+  ActionBar, type Action, Segmented, Select, Shimmer, Slider, Spinner, Steps, SubMenu, Swatch, Switch, Tabs, TaskList, Text, TextPair, Toaster, toast,
   Textarea, Token, TokenInput, Toolbar, ToolbarGroup, Tooltip, PropsTable, SideNav, type Option,
 } from "@/components";
 import { VarsTable } from "@/components/VarsTable";
@@ -221,9 +221,9 @@ export const registry: DocEntry[] = [
   {
     slug: "action-bar", name: "ActionBar", group: "Actions", description: "Buttons in a row; the ones that do not fit move into a \"more\" menu.",
     usage: ["Pass actions as data so each one can render as a button or a menu item.", "Order matters: trailing actions are the first to overflow.", "The bar takes its container's width; narrow the preview to see the menu appear."],
-    controls: { width: { type: "number", default: 520, min: 120, max: 720, step: 10, doc: "Container width in px, to try the overflow." }, size: { type: "select", options: SIZES, default: "md" }, justify: { type: "select", options: ["start", "end"], default: "start", doc: "Alignment inside the bar, which grows to fill its row." }, icons: { type: "boolean", default: true }, header: { type: "boolean", doc: "Place the bar in a header row next to a title and a Save button." } },
-    states: [{ name: "Default", props: {} }, { name: "In a header row", props: { header: true, justify: "end", width: 720, size: "sm", icons: false }, description: "Next to a title and another button, the bar takes the free space and shows every action that fits." }],
-    extraProps: [{ name: "actions", type: "{ key, label, icon?, onClick?, href?, disabled?, danger?, variant?, color?, items? }[]", description: "items (ListItems) makes the action a Dropdown inline and a submenu when it overflows." }, { name: "moreLabel", type: "string", default: "\"More\"", description: "Accessible label of the overflow trigger." }],
+    controls: { width: { type: "number", default: 520, min: 120, max: 720, step: 10, doc: "Container width in px, to try the overflow." }, size: { type: "select", options: SIZES, default: "md" }, justify: { type: "select", options: ["start", "end"], default: "start", doc: "Alignment inside the bar, which grows to fill its row." }, icons: { type: "boolean", default: true }, header: { type: "boolean", doc: "Place the bar in a header row next to a title and a Save button." }, pinned: { type: "boolean", doc: "Add two actions with overflow=\"always\" that only ever show in the menu." } },
+    states: [{ name: "Default", props: {} }, { name: "In a header row", props: { header: true, justify: "end", width: 720, size: "sm", icons: false }, description: "Next to a title and another button, the bar takes the free space and shows every action that fits." }, { name: "Always in the menu", props: { pinned: true }, description: "Skip and Remove have overflow=\"always\": the menu is always there and they never take inline room." }],
+    extraProps: [{ name: "actions", type: "{ key, label, icon?, onClick?, href?, disabled?, danger?, variant?, color?, items?, overflow? }[]", description: "items (ListItems) makes the action a Dropdown inline and a submenu when it overflows. overflow=\"always\" keeps it in the menu even when there is room." }, { name: "moreLabel", type: "string", default: "\"More\"", description: "Accessible label of the overflow trigger." }],
     render: (p) => (
       <div className={bool(p.header) ? "row" : undefined} style={{ width: Number(p.width), maxWidth: "100%", outline: "1px dashed var(--color-border-strong)", outlineOffset: 4 }}>
         {bool(p.header) && <TextPair size="lg" title="Fullstack Engineer" description="ByteLogic · 12 candidates" className="grow" />}
@@ -234,11 +234,12 @@ export const registry: DocEntry[] = [
           { key: "move", label: "Move to", icon: bool(p.icons) ? "inbox" : undefined, items: <><ListItem label="Inbox" /><ListItem label="Archive" /><ListItem label="Trash" /></> },
           { key: "archive", label: "Archive", icon: bool(p.icons) ? "archive" : undefined },
           { key: "delete", label: "Delete", icon: bool(p.icons) ? "trash" : undefined, danger: true },
+          ...(bool(p.pinned) ? ([{ key: "skip", label: "Skip this step", icon: bool(p.icons) ? "arrowRight" : undefined, overflow: "always" }, { key: "remove", label: "Remove from pipeline", icon: bool(p.icons) ? "xCircle" : undefined, danger: true, overflow: "always" }] as Action[]) : []),
         ]} />
         {bool(p.header) && <Button size={opt(p.size, "md")} variant="fill" color="primary">Save</Button>}
       </div>
     ),
-    code: (p) => `${p.header ? '<div className="row">\n  <TextPair size="lg" title="Fullstack Engineer" className="grow" />\n  ' : ""}<ActionBar${p.size !== "md" ? ` size="${str(p.size)}"` : ""}${p.justify === "end" ? ' justify="end"' : ""} actions={[\n  { key: "edit", label: "Edit", icon: "edit", variant: "fill", color: "primary", onClick: edit },\n  { key: "share", label: "Share", icon: "send", onClick: share },\n  { key: "duplicate", label: "Duplicate", icon: "copy", onClick: duplicate },\n  { key: "move", label: "Move to", icon: "inbox", items: <><ListItem label="Inbox" /><ListItem label="Archive" /></> },\n  { key: "archive", label: "Archive", icon: "archive", onClick: archive },\n  { key: "delete", label: "Delete", icon: "trash", danger: true, onClick: remove },\n]} />${p.header ? '\n  <Button variant="fill" color="primary">Save</Button>\n</div>' : ""}`,
+    code: (p) => `${p.header ? '<div className="row">\n  <TextPair size="lg" title="Fullstack Engineer" className="grow" />\n  ' : ""}<ActionBar${p.size !== "md" ? ` size="${str(p.size)}"` : ""}${p.justify === "end" ? ' justify="end"' : ""} actions={[\n  { key: "edit", label: "Edit", icon: "edit", variant: "fill", color: "primary", onClick: edit },\n  { key: "share", label: "Share", icon: "send", onClick: share },\n  { key: "duplicate", label: "Duplicate", icon: "copy", onClick: duplicate },\n  { key: "move", label: "Move to", icon: "inbox", items: <><ListItem label="Inbox" /><ListItem label="Archive" /></> },\n  { key: "archive", label: "Archive", icon: "archive", onClick: archive },\n  { key: "delete", label: "Delete", icon: "trash", danger: true, onClick: remove },\n${p.pinned ? '  { key: "skip", label: "Skip this step", icon: "arrowRight", overflow: "always", onClick: skip },\n  { key: "remove", label: "Remove from pipeline", icon: "xCircle", danger: true, overflow: "always", onClick: removeFromPipeline },\n' : ""}]} />${p.header ? '\n  <Button variant="fill" color="primary">Save</Button>\n</div>' : ""}`,
     cssBlocks: ["Action bar"], related: ["button", "dropdown", "toolbar"],
   },
   {

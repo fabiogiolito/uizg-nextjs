@@ -50,6 +50,9 @@ Edit it here, check it on the docs site, and the consumer picks it up. Bump `ver
 
 ## Changes
 
+### 0.8.1
+- ActionBar actions take `overflow: "always"` to live in the "more" menu even when there is room; they keep icon, danger and items (as a submenu) and never count toward the inline width.
+
 ### 0.8.0
 - Frame `color` (primary, success, warning, danger) tints the surface with that color at 5%.
 

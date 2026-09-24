@@ -21,6 +21,8 @@ export type Action = {
   color?: ButtonProps["color"];
   /** Menu content (ListItems). Inline the action is a Dropdown button; in the "more" menu it is a submenu. */
   items?: ReactNode;
+  /** "always" keeps the action in the "more" menu even when there is room, for secondary or destructive actions. */
+  overflow?: "auto" | "always";
 };
 
 export type ActionBarProps = {
@@ -42,7 +44,10 @@ export type ActionBarProps = {
 export function ActionBar({ actions, size = "md", justify = "start", moreLabel = "More", className }: ActionBarProps) {
   const ref = useRef<HTMLDivElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(actions.length);
+  // Only auto actions compete for inline space; "always" ones live in the menu regardless.
+  const inline = actions.filter((a) => a.overflow !== "always");
+  const pinned = actions.filter((a) => a.overflow === "always");
+  const [visible, setVisible] = useState(inline.length);
 
   useLayoutEffect(() => {
     const el = ref.current;
@@ -55,7 +60,8 @@ export function ActionBar({ actions, size = "md", justify = "start", moreLabel =
       const available = el.clientWidth;
       const widths = kids.map((k) => k.offsetWidth);
       const total = widths.reduce((a, w, i) => a + w + (i ? gap : 0), 0);
-      if (total <= available) return setVisible(kids.length);
+      // With pinned actions the more button is always present, so it always takes room.
+      if (pinned.length === 0 && total <= available) return setVisible(kids.length);
       // Leave room for the more button after the last visible one.
       let used = more.offsetWidth;
       let n = 0;
@@ -71,7 +77,7 @@ export function ActionBar({ actions, size = "md", justify = "start", moreLabel =
     ro.observe(el);
     ro.observe(measure);
     return () => ro.disconnect();
-  }, [actions.length]);
+  }, [inline.length, pinned.length]);
 
   const button = (a: Action) =>
     a.items ? (
@@ -83,8 +89,8 @@ export function ActionBar({ actions, size = "md", justify = "start", moreLabel =
         {a.label}
       </Button>
     );
-  const shown = actions.slice(0, visible);
-  const overflow = actions.slice(visible);
+  const shown = inline.slice(0, visible);
+  const overflow = [...inline.slice(visible), ...pinned];
 
   return (
     <div ref={ref} className={cx("action-bar", justify === "end" && "action-bar--end", className)}>
@@ -104,7 +110,7 @@ export function ActionBar({ actions, size = "md", justify = "start", moreLabel =
       )}
       {/* Hidden full row used only for measuring; the last child is the more button. */}
       <div ref={measureRef} className="action-bar__measure" aria-hidden inert>
-        {actions.map(button)}
+        {inline.map(button)}
         <Button size={size} icon="more" aria-label={moreLabel} />
       </div>
     </div>
