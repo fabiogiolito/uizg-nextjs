@@ -50,6 +50,9 @@ Edit it here, check it on the docs site, and the consumer picks it up. Bump `ver
 
 ## Changes
 
+### 0.3.4
+- Autocomplete options match a small field: sm font, height and inset.
+
 ### 0.3.3
 - Token menu hover follows the chip's corner radius.
 

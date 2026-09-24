@@ -548,6 +548,9 @@ body {
 .autocomplete__menu:popover-open { display: block; }
 .autocomplete__status { padding: var(--space-2) var(--button-h-padding); }
 .autocomplete__option--active { background: var(--color-surface); }
+/* Options follow the field size: a small field gets small rows, like small buttons. */
+.autocomplete:has(> .input--sm) .autocomplete__option { min-height: var(--control-height-sm); font-size: var(--font-size-sm); padding-inline: calc(var(--button-h-padding) * 0.86); }
+.autocomplete:has(> .input--sm) .autocomplete__status { font-size: var(--font-size-xs); }
 .autocomplete__option--create { color: var(--color-primary); }
 
 /* Wrapping field for tokens */
