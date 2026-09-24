@@ -14,6 +14,8 @@ export type Column<Row> = {
   /** Initial width in px. */
   width?: number;
   minWidth?: number;
+  /** With `fill`, this column absorbs the extra width; its width then acts as a minimum. */
+  flex?: boolean;
   align?: "start" | "center" | "end";
   /** Keep this column visible while the table scrolls horizontally. */
   sticky?: "left" | "right";
@@ -45,6 +47,8 @@ export type TableProps<Row> = {
   onColumnsChange?: (columns: { key: string; width: number; hidden: boolean; label?: string }[]) => void;
   reorderable?: boolean;
   resizable?: boolean;
+  /** Stretch to the container width; the `flex` column (or the last non-sticky one) takes the extra space. */
+  fill?: boolean;
   /** Show the hover "more" menu on headers with sort, hide and rename. */
   columnMenu?: boolean;
   /** Footer cells by column key, rendered in a sticky tfoot. */
@@ -84,6 +88,7 @@ export function Table<Row extends Record<string, unknown>>({
   onColumnsChange,
   reorderable,
   resizable,
+  fill,
   columnMenu,
   footer,
   maxHeight,
@@ -280,6 +285,8 @@ export function Table<Row extends Record<string, unknown>>({
     );
 
   const totalWidth = ordered.reduce((w, c) => w + c.width, 0) + (selectable ? selectWidth : 0);
+  // Fill: the table is as wide as its wrapper (never narrower than its columns) and one column has no fixed width.
+  const flexKey = fill ? (ordered.find((c) => c.flex) ?? [...ordered].reverse().find((c) => !c.sticky) ?? ordered[ordered.length - 1])?.key : undefined;
   const selectClass = (base: string) =>
     cx(base, `${base}--select`, selectStickyLeft && `${base}--sticky ${base}--sticky-left`, lastLeft === "__select" && `${base}--sticky-edge-left`);
   const selectStyle = selectStickyLeft ? { left: 0 } : undefined;
@@ -291,12 +298,12 @@ export function Table<Row extends Record<string, unknown>>({
     >
       <table
         className={cx("table", "table--fixed", bordered && "table--bordered", compact && "table--compact")}
-        style={{ width: totalWidth }}
+        style={fill ? { width: "100%", minWidth: totalWidth } : { width: totalWidth }}
       >
         <colgroup>
           {selectable && <col style={{ width: selectWidth }} />}
           {ordered.map((c) => (
-            <col key={c.key} style={{ width: c.width }} />
+            <col key={c.key} style={c.key === flexKey ? undefined : { width: c.width }} />
           ))}
         </colgroup>
         <thead className="table__head">

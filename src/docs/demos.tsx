@@ -29,7 +29,7 @@ const columns: Column<Person>[] = [
 ];
 export function TableDemo({ p }: { p: Props }) {
   const [rows, setRows] = useState<Person[]>(people.map((x, i) => ({ id: x.value, name: x.label, email: `${x.value}@example.com`, role: ["Engineer", "Researcher", "Lead"][i % 3], commits: 120 * (i + 1) })));
-  return <Table columns={columns} rows={rows} rowKey={(r) => r.id} selectable={bool(p.selectable)} reorderable={bool(p.reorderable)} resizable={bool(p.resizable)} columnMenu={bool(p.columnMenu)} bordered={bool(p.bordered)} compact={bool(p.compact)} maxHeight={280} onCellChange={(i, key, value) => setRows((r) => r.map((row, j) => (j === i ? { ...row, [key]: value } : row)))} />;
+  return <Table columns={columns} rows={rows} rowKey={(r) => r.id} selectable={bool(p.selectable)} reorderable={bool(p.reorderable)} resizable={bool(p.resizable)} fill={bool(p.fill)} columnMenu={bool(p.columnMenu)} bordered={bool(p.bordered)} compact={bool(p.compact)} maxHeight={280} onCellChange={(i, key, value) => setRows((r) => r.map((row, j) => (j === i ? { ...row, [key]: value } : row)))} />;
 }
 export function ComposerDemo({ p }: { p: Props }) {
   const [draft, setDraft] = useState("");

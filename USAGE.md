@@ -50,6 +50,9 @@ Edit it here, check it on the docs site, and the consumer picks it up. Bump `ver
 
 ## Changes
 
+### 0.5.0
+- Table `fill` stretches the table to its container. A column with `flex` (or the last non-sticky column) absorbs the extra width; other columns keep their pixel widths, and resizing, sticky columns and the column menu work as before.
+
 ### 0.4.0
 - Composer has `onAttach` and `onRecord`, which show the same attach and record buttons Chat uses; `tools` renders after them.
 - Composer `leading` aligns with the first line of text and stays put as the box grows.
