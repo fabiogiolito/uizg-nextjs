@@ -50,6 +50,10 @@ Edit it here, check it on the docs site, and the consumer picks it up. Bump `ver
 
 ## Changes
 
+### 0.6.0
+- HoverCard `anchor` positions the panel against another element's anchor-name; `open` makes it controlled.
+- Table `rowAnchors` gives each row `anchor-name: --table-row-<key>` and passes it to `render(row, i, { anchor })`. A cell's HoverCard with that anchor, `side="bottom"` and `align="end"` aligns to the row's right edge and opens below the row.
+
 ### 0.5.1
 - Dropdown menus render in a portal at the end of body, so they are never clipped by table cells, sticky columns or scrolling panels. Anchoring, flipping, hover, nesting, outside click and Escape behave as before; Escape now returns focus to the trigger. Tokens and theme come from :root, so portaled menus need no extra setup; if you theme a subtree only, theme :root instead.
 

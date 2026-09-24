@@ -1322,7 +1322,9 @@ button.attachment:focus-visible { outline: none; box-shadow: var(--focus-ring); 
   transition: opacity var(--duration) var(--easing), visibility 0s linear var(--duration);
   position-try-fallbacks: flip-block, flip-inline;
 }
-.hover-card:hover .hover-card__panel, .hover-card:focus-within .hover-card__panel { opacity: 1; visibility: visible; transition-delay: var(--hover-card-delay); }
+.hover-card:not(.hover-card--controlled):hover .hover-card__panel, .hover-card:not(.hover-card--controlled):focus-within .hover-card__panel { opacity: 1; visibility: visible; transition-delay: var(--hover-card-delay); }
+/* Controlled: the parent decides, and it has usually applied its own delay. */
+.hover-card--open .hover-card__panel { opacity: 1; visibility: visible; transition-delay: 0s; }
 .hover-card__content { display: block; padding: var(--card-padding); color: var(--color-text); background: var(--color-raised); border: var(--border-width) solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); }
 .hover-card--top .hover-card__panel { position-area: block-start; }
 .hover-card--bottom .hover-card__panel { position-area: block-end; }

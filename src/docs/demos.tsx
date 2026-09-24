@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Avatar, Board, BoardColumn, BoardItem, Button, Composer, Dropdown, Field, Input, List, ListItem, ListSection, Modal, Split, Table, Text, TextPair, type Column, type Option } from "@/components";
+import { Avatar, Board, BoardColumn, BoardItem, Button, Composer, Dropdown, Field, HoverCard, Input, List, ListItem, ListSection, Modal, Split, Table, Text, TextPair, type Column, type Option } from "@/components";
 import type { Props } from "./types";
 
 const str = (v: unknown, d = "") => (typeof v === "string" ? v : d);
@@ -29,7 +29,11 @@ const columns: Column<Person>[] = [
 ];
 export function TableDemo({ p }: { p: Props }) {
   const [rows, setRows] = useState<Person[]>(people.map((x, i) => ({ id: x.value, name: x.label, email: `${x.value}@example.com`, role: ["Engineer", "Researcher", "Lead"][i % 3], commits: 120 * (i + 1) })));
-  return <Table columns={columns} rows={rows} rowKey={(r) => r.id} selectable={bool(p.selectable)} reorderable={bool(p.reorderable)} resizable={bool(p.resizable)} fill={bool(p.fill)} columnMenu={bool(p.columnMenu)} bordered={bool(p.bordered)} compact={bool(p.compact)} maxHeight={280} onCellChange={(i, key, value) => setRows((r) => r.map((row, j) => (j === i ? { ...row, [key]: value } : row)))} />;
+  // With row anchors, the name cell's hover panel aligns to the row's right edge and opens below the row.
+  const cols = bool(p.rowAnchors)
+    ? columns.map((c) => (c.key === "name" ? { ...c, editable: false, render: (row: Person, _i: number, { anchor }: { anchor?: string }) => <HoverCard anchor={anchor} side="bottom" align="end" content={<div className="row"><Avatar name={row.name} /><TextPair title={row.name} description={`${row.role} · ${row.commits} commits`} className="grow" /></div>}><a className="link" href="#">{row.name}</a></HoverCard> } : c))
+    : columns;
+  return <Table columns={cols} rowAnchors={bool(p.rowAnchors)} rows={rows} rowKey={(r) => r.id} selectable={bool(p.selectable)} reorderable={bool(p.reorderable)} resizable={bool(p.resizable)} fill={bool(p.fill)} columnMenu={bool(p.columnMenu)} bordered={bool(p.bordered)} compact={bool(p.compact)} maxHeight={280} onCellChange={(i, key, value) => setRows((r) => r.map((row, j) => (j === i ? { ...row, [key]: value } : row)))} />;
 }
 export function ComposerDemo({ p }: { p: Props }) {
   const [draft, setDraft] = useState("");

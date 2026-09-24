@@ -28,7 +28,8 @@ export type Column<Row> = {
   editor?: (props: { row: Row; rowIndex: number; value: unknown; setValue: (value: unknown) => void; commit: () => void; cancel: () => void }) => ReactNode;
   mono?: boolean;
   /** Custom cell renderer. Defaults to the row value at `key`. */
-  render?: (row: Row, rowIndex: number) => ReactNode;
+  /** Custom cell content. With `rowAnchors`, the third argument carries the row's anchor name. */
+  render?: (row: Row, rowIndex: number, ctx: { anchor?: string }) => ReactNode;
   /** Value used for sorting. Defaults to the row value at `key`. */
   sortValue?: (row: Row) => string | number;
   /** Hide the header menu for this column. */
@@ -49,6 +50,8 @@ export type TableProps<Row> = {
   resizable?: boolean;
   /** Stretch to the container width; the `flex` column (or the last non-sticky one) takes the extra space. */
   fill?: boolean;
+  /** Give each row an anchor-name (--table-row-<key>) that cells can hand to a HoverCard, so a panel aligns to the whole row. */
+  rowAnchors?: boolean;
   /** Show the hover "more" menu on headers with sort, hide and rename. */
   columnMenu?: boolean;
   /** Footer cells by column key, rendered in a sticky tfoot. */
@@ -89,6 +92,7 @@ export function Table<Row extends Record<string, unknown>>({
   reorderable,
   resizable,
   fill,
+  rowAnchors,
   columnMenu,
   footer,
   maxHeight,
@@ -388,8 +392,10 @@ export function Table<Row extends Record<string, unknown>>({
           {view.map(({ row, index }, viewIndex) => {
             const key = rowKey(row, index);
             const isSelected = selectedKeys.has(key);
+            // Anchor names are dashed-idents: anything outside [A-Za-z0-9_-] becomes a dash.
+            const anchor = rowAnchors ? `--table-row-${key.replace(/[^A-Za-z0-9_-]/g, "-")}` : undefined;
             return (
-            <tr key={key} className={cx("table__row", isSelected && "table__row--selected")} aria-selected={selectable ? isSelected : undefined}>
+            <tr key={key} className={cx("table__row", isSelected && "table__row--selected")} aria-selected={selectable ? isSelected : undefined} style={anchor ? ({ anchorName: anchor } as CSSProperties) : undefined}>
               {selectable && (
                 <td className={selectClass("table__cell")} style={selectStyle}>
                   <Checkbox
@@ -448,7 +454,7 @@ export function Table<Row extends Record<string, unknown>>({
                         }}
                       />
                     ) : (
-                      <span className="table__value">{c.render ? c.render(row, index) : String(row[c.key] ?? "")}</span>
+                      <span className="table__value">{c.render ? c.render(row, index, { anchor }) : String(row[c.key] ?? "")}</span>
                     )}
                   </td>
                 );
