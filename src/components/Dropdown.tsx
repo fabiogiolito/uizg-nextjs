@@ -9,16 +9,7 @@ import { List } from "./List";
 
 const supportsAnchor = typeof CSS !== "undefined" && CSS.supports("anchor-name", "--a");
 
-/** One shared container at the end of body for every menu, created on first use (client only). */
-let portalRoot: HTMLElement | null = null;
-function getPortalRoot() {
-  if (!portalRoot) {
-    portalRoot = document.createElement("div");
-    portalRoot.className = "dropdown-portal";
-    document.body.appendChild(portalRoot);
-  }
-  return portalRoot;
-}
+import { getPortalRoot } from "./portal";
 
 /** Ids of the dropdowns enclosing this one, so a nested menu's portal counts as inside its parent. */
 const ChainContext = createContext<string[]>([]);

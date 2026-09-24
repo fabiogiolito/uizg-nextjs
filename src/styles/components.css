@@ -850,8 +850,8 @@ body {
 
 /* ---- Dropdown ---- */
 .dropdown { position: relative; display: inline-flex; }
-/* Menus render here, at the end of body. Tokens and theme live on :root, so they inherit unchanged. */
-.dropdown-portal { display: contents; }
+/* Floating layers (menus, hover cards) render here, at the end of body. Tokens and theme live on :root, so they inherit unchanged. */
+.uizg-portal { display: contents; }
 .dropdown__menu {
   position: fixed;
   z-index: 30;
@@ -1307,9 +1307,9 @@ button.attachment:focus-visible { outline: none; box-shadow: var(--focus-ring); 
 .color-picker__input .input__control::-webkit-inner-spin-button, .color-picker__input .input__control::-webkit-outer-spin-button { appearance: none; margin: 0; }
 
 /* ---- Hover card ----
-   Opens after --hover-card-delay of hovering the trigger. The panel is a descendant of the
-   trigger wrapper, so hovering it keeps the wrapper hovered; the gap between them is padding,
-   not margin, so the pointer never leaves. */
+   Opens after --hover-card-delay of hovering the trigger and stays while the pointer is over the
+   panel. The panel is portaled and anchored, so it is never clipped or covered; the gap between
+   trigger and panel is padding, and a short grace period in JS bridges the pointer across it. */
 .hover-card { position: relative; display: inline; }
 .hover-card__panel {
   position: fixed;
@@ -1322,21 +1322,16 @@ button.attachment:focus-visible { outline: none; box-shadow: var(--focus-ring); 
   transition: opacity var(--duration) var(--easing), visibility 0s linear var(--duration);
   position-try-fallbacks: flip-block, flip-inline;
 }
-.hover-card:not(.hover-card--controlled):hover .hover-card__panel, .hover-card:not(.hover-card--controlled):focus-within .hover-card__panel { opacity: 1; visibility: visible; transition-delay: var(--hover-card-delay); }
+.hover-card__panel--hover { opacity: 1; visibility: visible; transition-delay: var(--hover-card-delay); }
 /* Controlled: the parent decides, and it has usually applied its own delay. */
-.hover-card--open .hover-card__panel { opacity: 1; visibility: visible; transition-delay: 0s; }
-.hover-card__content { display: block; padding: var(--card-padding); color: var(--color-text); background: var(--color-raised); border: var(--border-width) solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); }
-.hover-card--top .hover-card__panel { position-area: block-start; }
-.hover-card--bottom .hover-card__panel { position-area: block-end; }
-.hover-card--start .hover-card__panel { position-area: block-start span-inline-end; }
-.hover-card--bottom.hover-card--start .hover-card__panel { position-area: block-end span-inline-end; }
-.hover-card--end .hover-card__panel { position-area: block-start span-inline-start; }
-.hover-card--bottom.hover-card--end .hover-card__panel { position-area: block-end span-inline-start; }
-@supports not (anchor-name: --a) {
-  .hover-card__panel { position: absolute; left: 50%; transform: translateX(-50%); }
-  .hover-card--top .hover-card__panel { bottom: 100%; }
-  .hover-card--bottom .hover-card__panel { top: 100%; }
-}
+.hover-card__panel--open { opacity: 1; visibility: visible; transition-delay: 0s; }
+.hover-card__content { display: block; padding: var(--card-padding); color: var(--color-text); background: var(--color-raised); border: var(--border-width) solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); font-size: var(--font-size-base); font-weight: var(--font-weight-regular); line-height: var(--line-height-relaxed); white-space: normal; }
+.hover-card__panel--top { position-area: block-start; }
+.hover-card__panel--bottom { position-area: block-end; }
+.hover-card__panel--top.hover-card__panel--start { position-area: block-start span-inline-end; }
+.hover-card__panel--bottom.hover-card__panel--start { position-area: block-end span-inline-end; }
+.hover-card__panel--top.hover-card__panel--end { position-area: block-start span-inline-start; }
+.hover-card__panel--bottom.hover-card__panel--end { position-area: block-end span-inline-start; }
 
 /* ---- Data list ----
    One grid for all rows (display: contents on the row wrappers), so the label column is sized by
