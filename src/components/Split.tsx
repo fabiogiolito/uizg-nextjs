@@ -97,7 +97,7 @@ export function Split({ children, pane, defaultSize = 40, minWidth = 280, maxWid
     >
       <div className="split__primary">{children}</div>
       <div className="split__pane" aria-hidden={!open} inert={!open}>
-        <div className="split__divider" onPointerDown={onResizeStart} onDoubleClick={() => setSize(defaultSize)} aria-hidden />
+        <div className="split__divider" onPointerDown={onResizeStart} onDoubleClick={() => setSize(50)} aria-hidden />
         <div className="split__pane-content">{open ? pane : shown}</div>
       </div>
     </div>

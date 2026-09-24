@@ -147,7 +147,7 @@ export function SplitDemo({ p }: { p: Props }) {
       pane={open ? (
         <div className="stack" style={{ padding: "var(--space-4)", minHeight: "100%", background: "var(--color-raised)" }}>
           <div className="row"><TextPair size="lg" title={picked} description="Software Engineer" className="grow" /><Button size="sm" variant="ghost" icon="x" aria-label="Close" onClick={() => setOpen(false)} /></div>
-          <Text>Details for {picked}. Drag the divider to resize; double-click it to reset.</Text>
+          <Text>Details for {picked}. Drag the divider to resize; double-click it to split evenly.</Text>
         </div>
       ) : null}
     >
