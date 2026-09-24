@@ -50,6 +50,9 @@ Edit it here, check it on the docs site, and the consumer picks it up. Bump `ver
 
 ## Changes
 
+### 0.7.2
+- ActionBar grows to fill its flex row (`flex: 1 1 auto`) so it measures the real available width and no longer collapses early beside siblings; `justify="end"` aligns the buttons to the end.
+
 ### 0.7.1
 - Dropdown docs: a "Nested menu" preset and usage notes for submenus.
 

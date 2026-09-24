@@ -26,6 +26,8 @@ export type Action = {
 export type ActionBarProps = {
   actions: Action[];
   size?: ButtonProps["size"];
+  /** Where the buttons sit inside the bar's width. */
+  justify?: "start" | "end";
   /** Label for the overflow menu trigger. */
   moreLabel?: string;
   className?: string;
@@ -34,8 +36,10 @@ export type ActionBarProps = {
 /**
  * Buttons in a row. When the container is too narrow for all of them, the trailing ones move
  * into a "more" menu. Widths come from a hidden copy of the full row, so the count is exact.
+ * In a flex row the bar grows to take the free space (flex: 1 1 auto), so the width it measures
+ * is what is really available, not its own shrunken content.
  */
-export function ActionBar({ actions, size = "md", moreLabel = "More", className }: ActionBarProps) {
+export function ActionBar({ actions, size = "md", justify = "start", moreLabel = "More", className }: ActionBarProps) {
   const ref = useRef<HTMLDivElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(actions.length);
@@ -83,7 +87,7 @@ export function ActionBar({ actions, size = "md", moreLabel = "More", className 
   const overflow = actions.slice(visible);
 
   return (
-    <div ref={ref} className={cx("action-bar", className)}>
+    <div ref={ref} className={cx("action-bar", justify === "end" && "action-bar--end", className)}>
       {shown.map(button)}
       {overflow.length > 0 && (
         <Dropdown size={size} icon="more" hideChevron triggerLabel={moreLabel} align="right" className="action-bar__more">

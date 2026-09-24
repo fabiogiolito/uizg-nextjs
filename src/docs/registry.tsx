@@ -221,11 +221,13 @@ export const registry: DocEntry[] = [
   {
     slug: "action-bar", name: "ActionBar", group: "Actions", description: "Buttons in a row; the ones that do not fit move into a \"more\" menu.",
     usage: ["Pass actions as data so each one can render as a button or a menu item.", "Order matters: trailing actions are the first to overflow.", "The bar takes its container's width; narrow the preview to see the menu appear."],
-    controls: { width: { type: "number", default: 520, min: 120, max: 720, step: 10, doc: "Container width in px, to try the overflow." }, size: { type: "select", options: SIZES, default: "md" }, icons: { type: "boolean", default: true } },
+    controls: { width: { type: "number", default: 520, min: 120, max: 720, step: 10, doc: "Container width in px, to try the overflow." }, size: { type: "select", options: SIZES, default: "md" }, justify: { type: "select", options: ["start", "end"], default: "start", doc: "Alignment inside the bar, which grows to fill its row." }, icons: { type: "boolean", default: true }, header: { type: "boolean", doc: "Place the bar in a header row next to a title and a Save button." } },
+    states: [{ name: "Default", props: {} }, { name: "In a header row", props: { header: true, justify: "end", width: 720, size: "sm", icons: false }, description: "Next to a title and another button, the bar takes the free space and shows every action that fits." }],
     extraProps: [{ name: "actions", type: "{ key, label, icon?, onClick?, href?, disabled?, danger?, variant?, color?, items? }[]", description: "items (ListItems) makes the action a Dropdown inline and a submenu when it overflows." }, { name: "moreLabel", type: "string", default: "\"More\"", description: "Accessible label of the overflow trigger." }],
     render: (p) => (
-      <div style={{ width: Number(p.width), maxWidth: "100%", outline: "1px dashed var(--color-border-strong)", outlineOffset: 4 }}>
-        <ActionBar size={opt(p.size, "md")} actions={[
+      <div className={bool(p.header) ? "row" : undefined} style={{ width: Number(p.width), maxWidth: "100%", outline: "1px dashed var(--color-border-strong)", outlineOffset: 4 }}>
+        {bool(p.header) && <TextPair size="lg" title="Fullstack Engineer" description="ByteLogic · 12 candidates" className="grow" />}
+        <ActionBar size={opt(p.size, "md")} justify={opt(p.justify, "start")} actions={[
           { key: "edit", label: "Edit", icon: bool(p.icons) ? "edit" : undefined, variant: "fill", color: "primary" },
           { key: "share", label: "Share", icon: bool(p.icons) ? "send" : undefined },
           { key: "duplicate", label: "Duplicate", icon: bool(p.icons) ? "copy" : undefined },
@@ -233,9 +235,10 @@ export const registry: DocEntry[] = [
           { key: "archive", label: "Archive", icon: bool(p.icons) ? "archive" : undefined },
           { key: "delete", label: "Delete", icon: bool(p.icons) ? "trash" : undefined, danger: true },
         ]} />
+        {bool(p.header) && <Button size={opt(p.size, "md")} variant="fill" color="primary">Save</Button>}
       </div>
     ),
-    code: (p) => `<ActionBar${p.size !== "md" ? ` size="${str(p.size)}"` : ""} actions={[\n  { key: "edit", label: "Edit", icon: "edit", variant: "fill", color: "primary", onClick: edit },\n  { key: "share", label: "Share", icon: "send", onClick: share },\n  { key: "duplicate", label: "Duplicate", icon: "copy", onClick: duplicate },\n  { key: "move", label: "Move to", icon: "inbox", items: <><ListItem label="Inbox" /><ListItem label="Archive" /></> },\n  { key: "archive", label: "Archive", icon: "archive", onClick: archive },\n  { key: "delete", label: "Delete", icon: "trash", danger: true, onClick: remove },\n]} />`,
+    code: (p) => `${p.header ? '<div className="row">\n  <TextPair size="lg" title="Fullstack Engineer" className="grow" />\n  ' : ""}<ActionBar${p.size !== "md" ? ` size="${str(p.size)}"` : ""}${p.justify === "end" ? ' justify="end"' : ""} actions={[\n  { key: "edit", label: "Edit", icon: "edit", variant: "fill", color: "primary", onClick: edit },\n  { key: "share", label: "Share", icon: "send", onClick: share },\n  { key: "duplicate", label: "Duplicate", icon: "copy", onClick: duplicate },\n  { key: "move", label: "Move to", icon: "inbox", items: <><ListItem label="Inbox" /><ListItem label="Archive" /></> },\n  { key: "archive", label: "Archive", icon: "archive", onClick: archive },\n  { key: "delete", label: "Delete", icon: "trash", danger: true, onClick: remove },\n]} />${p.header ? '\n  <Button variant="fill" color="primary">Save</Button>\n</div>' : ""}`,
     cssBlocks: ["Action bar"], related: ["button", "dropdown", "toolbar"],
   },
   {

@@ -155,7 +155,8 @@ body {
 /* ---- Action bar ----
    Buttons in a row that overflow into a "more" menu. A hidden copy of the full row provides the
    widths; the visible row never wraps, so anything that does not fit is in the menu. */
-.action-bar { position: relative; display: flex; align-items: center; gap: var(--inline-gap); min-width: 0; overflow: hidden; }
+.action-bar { position: relative; flex: 1 1 auto; display: flex; align-items: center; gap: var(--inline-gap); min-width: 0; overflow: hidden; }
+.action-bar--end { justify-content: flex-end; }
 .action-bar__more { flex: none; }
 /* max-content so the container never squeezes the copy; the widths read are the buttons' natural ones. */
 .action-bar__measure { position: absolute; inset-inline-start: 0; top: 0; display: flex; flex-wrap: nowrap; width: max-content; gap: var(--inline-gap); visibility: hidden; pointer-events: none; white-space: nowrap; }
