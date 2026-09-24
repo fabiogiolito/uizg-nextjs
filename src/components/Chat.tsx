@@ -51,7 +51,9 @@ export type ChatProps = {
   onRetry?: (message: ChatMessage) => void;
   /** Composer "+" button. */
   onAttach?: () => void;
-  /** Composer microphone button. */
+  /** Composer microphone button, which starts voice-to-text input. */
+  onDictate?: () => void;
+  /** @deprecated Use onDictate. */
   onRecord?: () => void;
   /** Content shown between the messages and the composer, e.g. a Questionnaire. */
   panel?: ReactNode;
@@ -62,7 +64,7 @@ export type ChatProps = {
 const formatTime = (d: Date) =>
   new Intl.DateTimeFormat("en-US", { weekday: "long", hour: "numeric", minute: "2-digit" }).format(d);
 
-export function Chat({ messages, typing, onSend, placeholder = "Message…", maxHeight, onCopy, onEdit, onRetry, onAttach, onRecord, panel, draftAttachments, onRemoveDraftAttachment, onFiles, className, grow }: ChatProps) {
+export function Chat({ messages, typing, onSend, placeholder = "Message…", maxHeight, onCopy, onEdit, onRetry, onAttach, onDictate, onRecord, panel, draftAttachments, onRemoveDraftAttachment, onFiles, className, grow }: ChatProps) {
   const listRef = useRef<HTMLDivElement>(null);
   const [draft, setDraft] = useState("");
   // Messages present at mount don't animate; only later arrivals do.
@@ -151,7 +153,7 @@ export function Chat({ messages, typing, onSend, placeholder = "Message…", max
           onFiles={onFiles}
           allowEmpty
           onAttach={onAttach ?? (() => {})}
-          onRecord={onRecord ?? (() => {})}
+          onDictate={onDictate ?? onRecord ?? (() => {})}
         />
       )}
     </div>

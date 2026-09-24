@@ -1283,7 +1283,7 @@ export default function Home() {
             tools={
               <>
                 <Button variant="ghost" size="sm" icon="plus" aria-label="Attach" onClick={() => setStandaloneFiles((f) => (f.length < sampleFiles.length ? [...f, sampleFiles[f.length]] : f))} />
-                <Button variant="ghost" size="sm" icon="mic" aria-label="Record" />
+                <Button variant="ghost" size="sm" icon="mic" aria-label="Dictate" />
               </>
             }
             actions={

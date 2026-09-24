@@ -19,7 +19,9 @@ export type ComposerProps = {
   leading?: ReactNode;
   /** Shows a "+" attach button at the bottom left. */
   onAttach?: () => void;
-  /** Shows a microphone button at the bottom left. */
+  /** Shows a microphone button at the bottom left that starts voice-to-text input. */
+  onDictate?: () => void;
+  /** @deprecated Use onDictate. */
   onRecord?: () => void;
   /** Extra buttons rendered at the bottom left, after attach and record. */
   tools?: ReactNode;
@@ -50,12 +52,13 @@ export type ComposerProps = {
  * A growing textarea in a box with a toolbar. Collapsed to one line at rest; on focus or with
  * content it grows and shows the toolbar with the submit button at the bottom right.
  */
-export function Composer({ value, onChange, onSubmit, placeholder, leading, onAttach, onRecord, tools, actions, attachments, onRemoveAttachment, onFiles, accept, allowEmpty, submitLabel = "Send", submitIcon = "arrowUp", submitIconPosition = "leading", expanded, focus, ariaLabel = "Message", className }: ComposerProps) {
+export function Composer({ value, onChange, onSubmit, placeholder, leading, onAttach, onDictate, onRecord, tools, actions, attachments, onRemoveAttachment, onFiles, accept, allowEmpty, submitLabel = "Send", submitIcon = "arrowUp", submitIconPosition = "leading", expanded, focus, ariaLabel = "Message", className }: ComposerProps) {
   const ref = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
     if (focus) ref.current?.focus();
   }, [focus]);
 
+  const dictate = onDictate ?? onRecord;
   const hasAttachments = !!attachments?.length;
   const canSubmit = !!value.trim() || (allowEmpty && hasAttachments);
   const submit = (e?: FormEvent) => {
@@ -94,16 +97,16 @@ export function Composer({ value, onChange, onSubmit, placeholder, leading, onAt
       {/* Toolbar buttons keep focus on the textarea (Safari does not focus clicked buttons), so the box stays open. */}
       <div className="composer__toolbar" onMouseDown={(e) => e.preventDefault()}>
         <Toolbar variant="ghost" block aria-label="Composer tools">
-          {(onAttach || onRecord || tools) && (
+          {(onAttach || dictate || tools) && (
             <ToolbarGroup>
               {onAttach && (
                 <Tooltip content="Attach" side="top">
                   <Button variant="ghost" size="sm" icon="plus" aria-label="Attach" onClick={onAttach} />
                 </Tooltip>
               )}
-              {onRecord && (
-                <Tooltip content="Record" side="top">
-                  <Button variant="ghost" size="sm" icon="mic" aria-label="Record" onClick={onRecord} />
+              {dictate && (
+                <Tooltip content="Dictate" side="top">
+                  <Button variant="ghost" size="sm" icon="mic" aria-label="Dictate" onClick={dictate} />
                 </Tooltip>
               )}
               {tools}
