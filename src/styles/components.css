@@ -152,6 +152,14 @@ body {
 .button-group > * + .button--flat, .button-group > * + * > .button--flat { box-shadow: inset var(--border-width) 0 0 color-mix(in srgb, var(--color-text) 15%, transparent); }
 .button-group > .dropdown { display: inline-flex; }
 
+/* ---- Action bar ----
+   Buttons in a row that overflow into a "more" menu. A hidden copy of the full row provides the
+   widths; the visible row never wraps, so anything that does not fit is in the menu. */
+.action-bar { position: relative; display: flex; align-items: center; gap: var(--inline-gap); min-width: 0; overflow: hidden; }
+.action-bar__more { flex: none; }
+/* max-content so the container never squeezes the copy; the widths read are the buttons' natural ones. */
+.action-bar__measure { position: absolute; inset-inline-start: 0; top: 0; display: flex; flex-wrap: nowrap; width: max-content; gap: var(--inline-gap); visibility: hidden; pointer-events: none; white-space: nowrap; }
+
 /* ---- Toolbar ----
    Raised bar with an inset; the radius is the control radius plus the inset so corners are
    concentric. Groups get a separator line between them. */

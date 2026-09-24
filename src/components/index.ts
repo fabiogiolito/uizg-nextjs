@@ -32,6 +32,7 @@ export { PropsTable, type PropRow } from "./PropsTable";
 export { Questionnaire, type Question, type Answers } from "./Questionnaire";
 export { Radio } from "./Radio";
 export { cx } from "./cx";
+export { ActionBar, type ActionBarProps, type Action } from "./ActionBar";
 export { iconNames, type IconName } from "./Icon";
 export { Board, BoardColumn, BoardItem, type BoardProps, type BoardColumnProps, type BoardItemProps } from "./Board";
 export { Segmented } from "./Segmented";

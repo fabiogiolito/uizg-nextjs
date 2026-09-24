@@ -4,7 +4,7 @@ import {
   Attachment, Autocomplete, Avatar, AvatarGroup, Badge, Banner, Blockquote, Button, ButtonGroup, Card, Chat, Checkbox, Choice,
   Citations, Cite, CodeBlock, Collapsible, CollapsibleGroup, ColorPicker, ContextMenu, CopyButton, DataList, Divider,
   Dropdown, DropZone, Frame, HoverCard, Icon, Input, Field, List, ListDivider, ListItem, ListSection, ListText, Questionnaire, Radio,
-  Segmented, Select, Shimmer, Slider, Spinner, Steps, SubMenu, Swatch, Switch, Tabs, TaskList, Text, TextPair, Toaster, toast,
+  ActionBar, Segmented, Select, Shimmer, Slider, Spinner, Steps, SubMenu, Swatch, Switch, Tabs, TaskList, Text, TextPair, Toaster, toast,
   Textarea, Token, TokenInput, Toolbar, ToolbarGroup, Tooltip, PropsTable, SideNav, type Option,
 } from "@/components";
 import { VarsTable } from "@/components/VarsTable";
@@ -217,6 +217,26 @@ export const registry: DocEntry[] = [
     code: (p) => { const kind = str(p.valueKind, "text"); const value = kind === "function" ? "{() => buildShareLink()}" : kind === "promise" ? "{fetchShareLink()}" : q("https://example.com/share/abc"); return jsx("CopyButton", { value, copiedLabel: p.copiedLabel !== "Copied" ? q(str(p.copiedLabel)) : undefined, iconPosition: p.iconPosition !== "leading" ? q(str(p.iconPosition)) : undefined, variant: p.variant !== "default" ? q(str(p.variant)) : undefined, size: p.size !== "md" ? q(str(p.size)) : undefined }, str(p.children) || undefined); },
     extraProps: [{ name: "value", type: "string | Promise<string> | (() => string | Promise<string>)", description: "What to copy. Functions are called on click and their result (or resolved value) is copied." }, { name: "onCopied", type: "(text: string) => void" }],
     cssBlocks: ["Button"], related: ["button"],
+  },
+  {
+    slug: "action-bar", name: "ActionBar", group: "Actions", description: "Buttons in a row; the ones that do not fit move into a \"more\" menu.",
+    usage: ["Pass actions as data so each one can render as a button or a menu item.", "Order matters: trailing actions are the first to overflow.", "The bar takes its container's width; narrow the preview to see the menu appear."],
+    controls: { width: { type: "number", default: 520, min: 120, max: 720, step: 10, doc: "Container width in px, to try the overflow." }, size: { type: "select", options: SIZES, default: "md" }, icons: { type: "boolean", default: true } },
+    extraProps: [{ name: "actions", type: "{ key, label, icon?, onClick?, href?, disabled?, danger?, variant?, color?, items? }[]", description: "items (ListItems) makes the action a Dropdown inline and a submenu when it overflows." }, { name: "moreLabel", type: "string", default: "\"More\"", description: "Accessible label of the overflow trigger." }],
+    render: (p) => (
+      <div style={{ width: Number(p.width), maxWidth: "100%", outline: "1px dashed var(--color-border-strong)", outlineOffset: 4 }}>
+        <ActionBar size={opt(p.size, "md")} actions={[
+          { key: "edit", label: "Edit", icon: bool(p.icons) ? "edit" : undefined, variant: "fill", color: "primary" },
+          { key: "share", label: "Share", icon: bool(p.icons) ? "send" : undefined },
+          { key: "duplicate", label: "Duplicate", icon: bool(p.icons) ? "copy" : undefined },
+          { key: "move", label: "Move to", icon: bool(p.icons) ? "inbox" : undefined, items: <><ListItem label="Inbox" /><ListItem label="Archive" /><ListItem label="Trash" /></> },
+          { key: "archive", label: "Archive", icon: bool(p.icons) ? "archive" : undefined },
+          { key: "delete", label: "Delete", icon: bool(p.icons) ? "trash" : undefined, danger: true },
+        ]} />
+      </div>
+    ),
+    code: (p) => `<ActionBar${p.size !== "md" ? ` size="${str(p.size)}"` : ""} actions={[\n  { key: "edit", label: "Edit", icon: "edit", variant: "fill", color: "primary", onClick: edit },\n  { key: "share", label: "Share", icon: "send", onClick: share },\n  { key: "duplicate", label: "Duplicate", icon: "copy", onClick: duplicate },\n  { key: "move", label: "Move to", icon: "inbox", items: <><ListItem label="Inbox" /><ListItem label="Archive" /></> },\n  { key: "archive", label: "Archive", icon: "archive", onClick: archive },\n  { key: "delete", label: "Delete", icon: "trash", danger: true, onClick: remove },\n]} />`,
+    cssBlocks: ["Action bar"], related: ["button", "dropdown", "toolbar"],
   },
   {
     slug: "toolbar", name: "Toolbar", group: "Actions", description: "A raised bar of grouped controls with separators. Members keep their own styles.",

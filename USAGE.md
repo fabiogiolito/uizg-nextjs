@@ -50,6 +50,9 @@ Edit it here, check it on the docs site, and the consumer picks it up. Bump `ver
 
 ## Changes
 
+### 0.7.0
+- New `ActionBar`: buttons in a row that overflow into a "more" menu when the container is too narrow. Actions are data (`{ key, label, icon?, onClick?, href?, disabled?, danger?, variant?, color?, items? }`); an action with `items` is a Dropdown inline and a submenu in the "more" menu.
+
 ### 0.6.3
 - Layer tokens in tokens.css: `--z-hover-card` 20, `--z-dropdown` 30, `--z-tooltip` 40, `--z-toast` 50, `--z-modal` 100. Hover cards now sit below dropdown menus, and an opening Dropdown closes any open HoverCard.
 
