@@ -50,6 +50,9 @@ Edit it here, check it on the docs site, and the consumer picks it up. Bump `ver
 
 ## Changes
 
+### 0.7.1
+- Dropdown docs: a "Nested menu" preset and usage notes for submenus.
+
 ### 0.7.0
 - New `ActionBar`: buttons in a row that overflow into a "more" menu when the container is too narrow. Actions are data (`{ key, label, icon?, onClick?, href?, disabled?, danger?, variant?, color?, items? }`); an action with `items` is a Dropdown inline and a submenu in the "more" menu.
 
