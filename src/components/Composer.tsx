@@ -7,6 +7,7 @@ import { Button } from "./Button";
 import { DropZone } from "./DropZone";
 import type { IconName } from "./Icon";
 import { Toolbar, ToolbarGroup } from "./Toolbar";
+import { Tooltip } from "./Tooltip";
 
 export type ComposerProps = {
   value: string;
@@ -16,7 +17,11 @@ export type ComposerProps = {
   placeholder?: string;
   /** Element inline before the textarea, e.g. an AI sparkle icon. */
   leading?: ReactNode;
-  /** Buttons rendered at the bottom left. */
+  /** Shows a "+" attach button at the bottom left. */
+  onAttach?: () => void;
+  /** Shows a microphone button at the bottom left. */
+  onRecord?: () => void;
+  /** Extra buttons rendered at the bottom left, after attach and record. */
   tools?: ReactNode;
   /** Buttons rendered at the bottom right, before the submit button. */
   actions?: ReactNode;
@@ -45,7 +50,7 @@ export type ComposerProps = {
  * A growing textarea in a box with a toolbar. Collapsed to one line at rest; on focus or with
  * content it grows and shows the toolbar with the submit button at the bottom right.
  */
-export function Composer({ value, onChange, onSubmit, placeholder, leading, tools, actions, attachments, onRemoveAttachment, onFiles, accept, allowEmpty, submitLabel = "Send", submitIcon = "arrowUp", submitIconPosition = "leading", expanded, focus, ariaLabel = "Message", className }: ComposerProps) {
+export function Composer({ value, onChange, onSubmit, placeholder, leading, onAttach, onRecord, tools, actions, attachments, onRemoveAttachment, onFiles, accept, allowEmpty, submitLabel = "Send", submitIcon = "arrowUp", submitIconPosition = "leading", expanded, focus, ariaLabel = "Message", className }: ComposerProps) {
   const ref = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
     if (focus) ref.current?.focus();
@@ -89,7 +94,21 @@ export function Composer({ value, onChange, onSubmit, placeholder, leading, tool
       {/* Toolbar buttons keep focus on the textarea (Safari does not focus clicked buttons), so the box stays open. */}
       <div className="composer__toolbar" onMouseDown={(e) => e.preventDefault()}>
         <Toolbar variant="ghost" block aria-label="Composer tools">
-          {tools && <ToolbarGroup>{tools}</ToolbarGroup>}
+          {(onAttach || onRecord || tools) && (
+            <ToolbarGroup>
+              {onAttach && (
+                <Tooltip content="Attach" side="top">
+                  <Button variant="ghost" size="sm" icon="plus" aria-label="Attach" onClick={onAttach} />
+                </Tooltip>
+              )}
+              {onRecord && (
+                <Tooltip content="Record" side="top">
+                  <Button variant="ghost" size="sm" icon="mic" aria-label="Record" onClick={onRecord} />
+                </Tooltip>
+              )}
+              {tools}
+            </ToolbarGroup>
+          )}
           <ToolbarGroup end>
             {actions}
             <Button

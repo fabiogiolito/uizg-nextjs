@@ -150,16 +150,8 @@ export function Chat({ messages, typing, onSend, placeholder = "Message…", max
           onRemoveAttachment={onRemoveDraftAttachment}
           onFiles={onFiles}
           allowEmpty
-          tools={
-            <>
-              <Tooltip content="Attach" side="top">
-                <Button variant="ghost" size="sm" icon="plus" aria-label="Attach" onClick={onAttach} />
-              </Tooltip>
-              <Tooltip content="Record" side="top">
-                <Button variant="ghost" size="sm" icon="mic" aria-label="Record" onClick={onRecord} />
-              </Tooltip>
-            </>
-          }
+          onAttach={onAttach ?? (() => {})}
+          onRecord={onRecord ?? (() => {})}
         />
       )}
     </div>

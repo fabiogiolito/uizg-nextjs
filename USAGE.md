@@ -50,6 +50,10 @@ Edit it here, check it on the docs site, and the consumer picks it up. Bump `ver
 
 ## Changes
 
+### 0.4.0
+- Composer has `onAttach` and `onRecord`, which show the same attach and record buttons Chat uses; `tools` renders after them.
+- Composer `leading` aligns with the first line of text and stays put as the box grows.
+
 ### 0.3.4
 - Autocomplete options match a small field: sm font, height and inset.
 

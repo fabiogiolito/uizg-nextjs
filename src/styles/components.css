@@ -1241,7 +1241,8 @@ a.citations__title:hover { text-decoration: underline; text-underline-offset: 2p
 .composer__input { width: 100%; min-height: var(--control-height-lg); max-height: 240px; padding: var(--space-3) var(--space-4); font: inherit; line-height: var(--line-height-relaxed); color: var(--color-text); background: transparent; border: 0; outline: none; resize: none; field-sizing: content; transition: min-height var(--duration) var(--easing); }
 .composer__input::placeholder { color: var(--color-text-subtle); }
 .composer__field { display: flex; align-items: flex-start; }
-.composer__leading { flex: none; display: flex; align-items: center; height: var(--control-height-lg); padding-inline-start: var(--space-4); color: var(--color-text-muted); }
+/* Aligned with the first line of text: the input's top padding plus half the line-height minus the icon. */
+.composer__leading { flex: none; display: flex; align-items: center; padding-top: calc(var(--space-3) + (1em * var(--line-height-relaxed) - var(--icon-size)) / 2); padding-inline-start: var(--space-3); color: var(--color-text-muted); }
 .composer__leading + .composer__input { padding-inline-start: var(--space-2); }
 .composer:focus-within .composer__input, .composer--active .composer__input { min-height: calc(var(--font-size-base) * var(--line-height-relaxed) * 3 + var(--space-3) * 2); }
 .composer__attachments { display: flex; flex-wrap: wrap; gap: var(--space-2); padding: 0 var(--space-3) var(--space-2); }
