@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, type DragEvent, type ReactNode } from "react";
+import { createContext, useContext, useState, type CSSProperties, type DragEvent, type ReactNode } from "react";
 import { cx } from "./cx";
 import { Button } from "./Button";
 import { Card } from "./Card";
@@ -17,17 +17,21 @@ export type BoardProps = {
   draggable?: boolean;
   /** Show only this column; the others animate away. Null shows all. */
   focus?: string | null;
+  /** Cap on the focused column's width, so it does not stretch across a wide board. Any CSS length or px. */
+  focusWidth?: number | string;
   className?: string;
   /** BoardColumn children. */
   children: ReactNode;
 };
 
 /** A row of columns that fills its container's height. Items drag between columns; the board reports the move. */
-export function Board({ onMove, draggable = true, focus = null, className, children }: BoardProps) {
+export function Board({ onMove, draggable = true, focus = null, focusWidth, className, children }: BoardProps) {
   const [drag, setDrag] = useState<Drag>(null);
   return (
     <BoardContext.Provider value={{ drag, setDrag, onMove, draggable, focus }}>
-      <div className={cx("board", focus && "board--focused", className)}>{children}</div>
+      <div className={cx("board", focus && "board--focused", className)} style={focusWidth !== undefined ? ({ "--board-focus-width": typeof focusWidth === "number" ? `${focusWidth}px` : focusWidth } as CSSProperties) : undefined}>
+        {children}
+      </div>
     </BoardContext.Provider>
   );
 }

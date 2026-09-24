@@ -50,6 +50,9 @@ Edit it here, check it on the docs site, and the consumer picks it up. Bump `ver
 
 ## Changes
 
+### 0.8.3
+- Board focus mode: hidden columns are truly 0 wide even when collapsed, and the board drops its gap while focused, so no stray space remains beside the focused column. New `focusWidth` caps the focused column on wide boards.
+
 ### 0.8.2
 - Tooltips render in the shared portal, like menus and hover cards, so nothing can clip or cover them. Same API.
 

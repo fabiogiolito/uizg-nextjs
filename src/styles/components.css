@@ -1444,11 +1444,9 @@ button.attachment:focus-visible { outline: none; box-shadow: var(--focus-ring); 
    draggable rows; a column being dragged over gets a tint. Collapsed columns are a narrow rail
    with the title rotated, and still accept drops. */
 /* Bottom padding with a matching negative margin: the horizontal scrollbar gets room without moving the columns. */
-.board { display: flex; align-items: stretch; gap: var(--space-4); height: 100%; min-height: 0; padding-bottom: var(--space-4); margin-bottom: calc(var(--space-4) * -1); overflow-x: auto; }
+.board { display: flex; align-items: stretch; gap: var(--space-4); height: 100%; min-height: 0; padding-bottom: var(--space-4); margin-bottom: calc(var(--space-4) * -1); overflow-x: auto; transition: gap var(--duration-slow) var(--easing); }
 .board__column { flex: 1 0 var(--board-column-min-width, 280px); min-width: var(--board-column-min-width, 280px); transition: background var(--duration) var(--easing), border-color var(--duration) var(--easing), flex-basis var(--duration-slow) var(--easing), min-width var(--duration-slow) var(--easing), margin var(--duration-slow) var(--easing), opacity var(--duration) var(--easing); }
 /* Focused board: every other column shrinks to nothing and fades, pulling the focused one into place. */
-.board__column--hidden { flex: 0 0 0px; min-width: 0; width: 0; margin-inline-start: calc(var(--space-4) * -1); opacity: 0; overflow: hidden; pointer-events: none; }
-.board--focused { overflow-x: hidden; }
 .board__column--over { border-color: var(--color-primary); background: var(--color-primary-soft); }
 .board__column-header { --card-pad-y: var(--space-2); gap: var(--space-2); }
 .board__column-row { display: flex; align-items: center; gap: var(--space-2); min-height: var(--control-height-sm); }
@@ -1468,6 +1466,12 @@ button.attachment:focus-visible { outline: none; box-shadow: var(--focus-ring); 
 .board__column--collapsed > .card__body { display: flex; flex: 1; flex-direction: column; align-items: center; gap: var(--space-2); min-height: 0; }
 .board__column--collapsed .board__column-count { font-size: var(--font-size-sm); }
 .board__column-title--vertical { margin-top: auto; writing-mode: vertical-rl; transform: rotate(180deg); color: var(--color-text-muted); white-space: nowrap; }
+/* Focused board: every other column shrinks to nothing and fades, collapsed or not, and the gap goes
+   with them, so the focused column is pulled into place with no stray space. After the collapsed rules
+   so hidden always wins. Set --board-focus-width to stop the focused column stretching on wide screens. */
+.board--focused { gap: 0; overflow-x: hidden; }
+.board--focused > .board__column:not(.board__column--hidden) { flex: 0 1 var(--board-focus-width, 100%); }
+.board__column--hidden, .board__column--hidden.board__column--collapsed { flex: 0 0 0px; min-width: 0; width: 0; padding: 0; border-width: 0; opacity: 0; overflow: hidden; pointer-events: none; }
 /* Items: one padded block covering the row and the note, so hover, selection and the accent bar span all of it. */
 .board__item { position: relative; display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-2); border-radius: var(--radius); transition: background var(--duration) var(--easing); }
 .board__item--clickable { cursor: pointer; }
