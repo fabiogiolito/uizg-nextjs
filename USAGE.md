@@ -50,6 +50,9 @@ Edit it here, check it on the docs site, and the consumer picks it up. Bump `ver
 
 ## Changes
 
+### 0.5.1
+- Dropdown menus render in a portal at the end of body, so they are never clipped by table cells, sticky columns or scrolling panels. Anchoring, flipping, hover, nesting, outside click and Escape behave as before; Escape now returns focus to the trigger. Tokens and theme come from :root, so portaled menus need no extra setup; if you theme a subtree only, theme :root instead.
+
 ### 0.5.0
 - Table `fill` stretches the table to its container. A column with `flex` (or the last non-sticky column) absorbs the extra width; other columns keep their pixel widths, and resizing, sticky columns and the column menu work as before.
 

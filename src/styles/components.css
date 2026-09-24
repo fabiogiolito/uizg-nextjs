@@ -850,6 +850,8 @@ body {
 
 /* ---- Dropdown ---- */
 .dropdown { position: relative; display: inline-flex; }
+/* Menus render here, at the end of body. Tokens and theme live on :root, so they inherit unchanged. */
+.dropdown-portal { display: contents; }
 .dropdown__menu {
   position: fixed;
   z-index: 30;
