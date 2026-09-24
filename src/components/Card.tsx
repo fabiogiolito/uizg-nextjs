@@ -1,6 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { cx } from "./cx";
-import { TextPair } from "./TextPair";
+import { TextPair, type TextPairProps } from "./TextPair";
 
 export type CardProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   /** default: raised. surface: surface background. elevated: shadow instead of border. ghost: no box, content sits on whatever is behind. */
@@ -16,6 +16,8 @@ export type CardProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   /** Children are Cards rendered as sections with dividers between them and no outer padding. true or "column" stacks them; "row" lays them out side by side. */
   sections?: boolean | "column" | "row";
   title?: ReactNode;
+  /** TextPair size for the title; lg by default. */
+  titleSize?: TextPairProps["size"];
   /** Shown directly under the title as a text pair. */
   description?: ReactNode;
   /** Rendered on the right side of the header. */
@@ -26,7 +28,7 @@ export type CardProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
 };
 
 /** A box with optional header, body and footer. Also the building block inside a Frame. */
-export function Card({ variant = "default", size = "md", sizeX, sizeY, grow, sections, title, description, action, footer, className, children, ...rest }: CardProps) {
+export function Card({ variant = "default", size = "md", sizeX, sizeY, grow, sections, title, titleSize = "lg", description, action, footer, className, children, ...rest }: CardProps) {
   return (
     <div
       {...rest}
@@ -44,7 +46,7 @@ export function Card({ variant = "default", size = "md", sizeX, sizeY, grow, sec
     >
       {(title || action) && (
         <div className="card__header">
-          {title && <TextPair size="lg" titleAs="h3" title={title} description={description} className="card__title" />}
+          {title && <TextPair size={titleSize} titleAs="h3" title={title} description={description} className="card__title" />}
           {action}
         </div>
       )}

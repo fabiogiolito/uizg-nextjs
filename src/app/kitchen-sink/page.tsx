@@ -687,7 +687,7 @@ export default function Home() {
                 icon="search"
                 placeholder="Search people…"
                 renderToken={(item, { remove }) => (
-                  <Token variant="outline" size="sm" icon="user" label={item.label} onRemove={remove} />
+                  <Token variant="default" size="sm" icon="user" label={item.label} onRemove={remove} />
                 )}
               />
             </Field>
@@ -695,8 +695,8 @@ export default function Home() {
               <Token label="Badge token" />
               <Token label="With icon" icon="user" onRemove={() => {}} />
               <Token label="Required" meta="required" onRemove={() => {}} />
-              <Token variant="outline" label="Outline" onRemove={() => {}} />
-              <Token variant="outline" label="Outline with menu" meta="required" onRemove={() => {}} menu={<ListItem label="Option" />} />
+              <Token variant="default" label="Default" onRemove={() => {}} /><Token variant="outline" label="Outline" onRemove={() => {}} />
+              <Token variant="default" label="Default with menu" meta="required" onRemove={() => {}} menu={<ListItem label="Option" />} />
             </div>
           </div>
         </Section>

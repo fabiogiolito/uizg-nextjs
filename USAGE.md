@@ -47,3 +47,31 @@ import { Board, BoardColumn, BoardItem, SideNav, Split } from "uizg";
 ## Changing a component
 
 Edit it here, check it on the docs site, and the consumer picks it up. Bump `version` in package.json when a change is worth noting. If you ever need a copy that doesn't follow this folder, `npm pack` here and install the tarball instead of the path.
+
+## Changes
+
+### 0.3.3
+- Token menu hover follows the chip's corner radius.
+
+### 0.3.2
+- Small Selects have small options: sm font, control height and inset.
+
+### 0.3.1
+- Token renders a div (valid around its Dropdown) and the menu hover fills the full chip height.
+
+### 0.3.0
+- Token variants mirror Button: `default` is the raised look (what `outline` used to be), `outline` is now transparent with a border, `badge` unchanged. Callers using `variant="outline"` for the raised look should switch to `default`.
+- Token `icon` accepts an array; each renders before the label.
+- New `Textarea`: the Input frame with a growing textarea (`rows`, `maxHeight`, `size`, `mono`).
+
+### 0.2.1
+- Token menu highlight fills the whole chip when there is no remove button.
+- ListText has top padding, so it works as a plain-case heading at the top of a menu.
+
+### 0.2.0
+- Icons come from Lucide (the `lucide` package, icon data only). Every `icon` prop accepts any Lucide name in camelCase, e.g. `circlePlus`, `squareKanban`. The old names still work; `dollar`, `more` and `refresh` are aliases. `iconNames` exports a curated list for pickers.
+- `cx` and `IconName` are exported from the package index.
+- `Card` has `titleSize`. `Chat` has `grow`. `Composer` has `leading`. `Select` has `prepend`.
+- New token `--color-panel`: true white in light mode, a step above the background in dark mode.
+- Split no longer adds horizontal overflow when its pane is closed. Select options are vertically centered.
+- A Token with a `menu` is itself the trigger: click anywhere on it except the remove button. The chevron is now just an icon.

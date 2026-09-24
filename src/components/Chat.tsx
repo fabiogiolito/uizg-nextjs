@@ -43,6 +43,8 @@ export type ChatProps = {
   placeholder?: string;
   /** Max height of the scrolling message area. Any CSS length. */
   maxHeight?: string | number;
+  /** Fill the container's height; the message list takes the remaining space and scrolls. */
+  grow?: boolean;
   /** Called for the default copy action. */
   onCopy?: (message: ChatMessage) => void;
   onEdit?: (message: ChatMessage) => void;
@@ -60,7 +62,7 @@ export type ChatProps = {
 const formatTime = (d: Date) =>
   new Intl.DateTimeFormat("en-US", { weekday: "long", hour: "numeric", minute: "2-digit" }).format(d);
 
-export function Chat({ messages, typing, onSend, placeholder = "Message…", maxHeight, onCopy, onEdit, onRetry, onAttach, onRecord, panel, draftAttachments, onRemoveDraftAttachment, onFiles, className }: ChatProps) {
+export function Chat({ messages, typing, onSend, placeholder = "Message…", maxHeight, onCopy, onEdit, onRetry, onAttach, onRecord, panel, draftAttachments, onRemoveDraftAttachment, onFiles, className, grow }: ChatProps) {
   const listRef = useRef<HTMLDivElement>(null);
   const [draft, setDraft] = useState("");
   // Messages present at mount don't animate; only later arrivals do.
@@ -104,7 +106,7 @@ export function Chat({ messages, typing, onSend, placeholder = "Message…", max
   );
 
   return (
-    <div className={cx("chat", className)}>
+    <div className={cx("chat", grow && "chat--grow", className)}>
       <div ref={listRef} className="chat__messages" style={maxHeight !== undefined ? { maxHeight } : undefined}>
         {messages.map((m) => (
           <div key={m.id} className={cx("chat__message", `chat__message--${m.direction}`, !initialIds.has(m.id) && "chat__message--new")}>

@@ -44,6 +44,8 @@
   --color-bg-light-mode: hsl(50 10% 99%);
   --color-bg-dark-mode: hsl(50 12% 7%);
   --color-bg: light-dark(var(--color-bg-light-mode), var(--color-bg-dark-mode));
+  /* True white for panels that sit brighter than the page; in dark mode a step above the background. */
+  --color-panel: hsl(0 0% 100%);
   --color-primary: hsl(226 100% 59%);
   --color-success: hsl(150 71% 36%);
   --color-warning: hsl(38 95% 44%);
@@ -195,6 +197,7 @@
   :root:not([data-theme="light"]) {
     color-scheme: dark;
     --color-surface: hsl(from var(--color-bg) h min(s, 12) calc(l + 3));
+    --color-panel: hsl(from var(--color-bg) h min(s, 12) calc(l + 5));
     --color-surface-hover: hsl(from var(--color-bg) h 12 calc(l + 6));
     --color-border: hsl(from var(--color-bg) h 12 calc(l + 12));
     --color-border-strong: hsl(from var(--color-bg) h 12 calc(l + 22));
@@ -209,6 +212,7 @@
 :root[data-theme="dark"] {
   color-scheme: dark;
   --color-surface: hsl(from var(--color-bg) h min(s, 12) calc(l + 3));
+  --color-panel: hsl(from var(--color-bg) h min(s, 12) calc(l + 5));
   --color-surface-hover: hsl(from var(--color-bg) h 12 calc(l + 6));
   --color-border: hsl(from var(--color-bg) h 12 calc(l + 12));
   --color-border-strong: hsl(from var(--color-bg) h 12 calc(l + 22));

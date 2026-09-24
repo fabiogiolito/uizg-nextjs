@@ -14,6 +14,8 @@ export type ComposerProps = {
   /** Called on submit click or Enter (Shift+Enter inserts a line break). */
   onSubmit: () => void;
   placeholder?: string;
+  /** Element inline before the textarea, e.g. an AI sparkle icon. */
+  leading?: ReactNode;
   /** Buttons rendered at the bottom left. */
   tools?: ReactNode;
   /** Buttons rendered at the bottom right, before the submit button. */
@@ -43,7 +45,7 @@ export type ComposerProps = {
  * A growing textarea in a box with a toolbar. Collapsed to one line at rest; on focus or with
  * content it grows and shows the toolbar with the submit button at the bottom right.
  */
-export function Composer({ value, onChange, onSubmit, placeholder, tools, actions, attachments, onRemoveAttachment, onFiles, accept, allowEmpty, submitLabel = "Send", submitIcon = "arrowUp", submitIconPosition = "leading", expanded, focus, ariaLabel = "Message", className }: ComposerProps) {
+export function Composer({ value, onChange, onSubmit, placeholder, leading, tools, actions, attachments, onRemoveAttachment, onFiles, accept, allowEmpty, submitLabel = "Send", submitIcon = "arrowUp", submitIconPosition = "leading", expanded, focus, ariaLabel = "Message", className }: ComposerProps) {
   const ref = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
     if (focus) ref.current?.focus();
@@ -64,16 +66,19 @@ export function Composer({ value, onChange, onSubmit, placeholder, tools, action
 
   const form = (
     <form className={cx("composer", (value || expanded || hasAttachments) && "composer--active", className)} onSubmit={submit}>
-      <textarea
-        ref={ref}
-        className="composer__input"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onKeyDown={onKeyDown}
-        placeholder={placeholder}
-        aria-label={ariaLabel}
-        rows={1}
-      />
+      <div className="composer__field">
+        {leading && <div className="composer__leading">{leading}</div>}
+        <textarea
+          ref={ref}
+          className="composer__input"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onKeyDown={onKeyDown}
+          placeholder={placeholder}
+          aria-label={ariaLabel}
+          rows={1}
+        />
+      </div>
       {hasAttachments && (
         <div className="composer__attachments">
           {attachments!.map((a) => (
