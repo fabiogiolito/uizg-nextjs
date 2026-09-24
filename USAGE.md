@@ -50,6 +50,9 @@ Edit it here, check it on the docs site, and the consumer picks it up. Bump `ver
 
 ## Changes
 
+### 0.6.2
+- HoverCard `width` and `panelClassName`, Dropdown `menuClassName`: style the portaled panel or menu, which the wrapper's className no longer reaches.
+
 ### 0.6.1
 - HoverCard panels render in the shared portal, like Dropdown menus, so a sticky table cell can no longer trap them under later rows. Hover is tracked in JS with a short grace period between trigger and panel; the panel sets its own font so it does not inherit a mono or small cell.
 

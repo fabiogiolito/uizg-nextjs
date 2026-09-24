@@ -19,7 +19,12 @@ export type HoverCardProps = {
   anchor?: string;
   /** Controlled visibility from a parent's own hover logic; the trigger's hover is ignored when set. */
   open?: boolean;
+  /** Panel width; a number is pixels. Defaults to --hover-card-width. */
+  width?: number | string;
+  /** Class for the wrapper around the trigger. */
   className?: string;
+  /** Class for the portaled panel, which the wrapper's className and variables do not reach. */
+  panelClassName?: string;
   /** The element that opens the card on hover or focus. */
   children: ReactNode;
 };
@@ -29,7 +34,7 @@ export type HoverCardProps = {
  * is over the panel. The panel is portaled to the end of body so no cell, sticky column or panel can
  * clip or cover it, and anchored to the trigger (or to `anchor`) with CSS anchor positioning.
  */
-export function HoverCard({ content, side = "top", align = "center", anchor, open, className, children }: HoverCardProps) {
+export function HoverCard({ content, side = "top", align = "center", anchor, open, width, className, panelClassName, children }: HoverCardProps) {
   const id = useId();
   const ownAnchor = `--hover-card-${id.replace(/[^a-zA-Z0-9]/g, "")}`;
   const anchorName = anchor ?? ownAnchor;
@@ -64,8 +69,8 @@ export function HoverCard({ content, side = "top", align = "center", anchor, ope
     <span
       role="dialog"
       id={id}
-      className={cx("hover-card__panel", `hover-card__panel--${side}`, `hover-card__panel--${align}`, shown && (controlled ? "hover-card__panel--open" : "hover-card__panel--hover"))}
-      style={{ ...(supportsAnchor ? { positionAnchor: anchorName } : pos) } as CSSProperties}
+      className={cx("hover-card__panel", `hover-card__panel--${side}`, `hover-card__panel--${align}`, shown && (controlled ? "hover-card__panel--open" : "hover-card__panel--hover"), panelClassName)}
+      style={{ ...(supportsAnchor ? { positionAnchor: anchorName } : pos), ...(width !== undefined ? { "--hover-card-width": typeof width === "number" ? `${width}px` : width } : {}) } as CSSProperties}
       onPointerEnter={enter}
       onPointerLeave={leave}
     >

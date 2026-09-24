@@ -51,7 +51,10 @@ export type DropdownProps = {
   triggerLabel?: string;
   /** Render your own trigger (e.g. a ListItem) with the props spread onto it. */
   trigger?: (props: DropdownTriggerProps, open: boolean) => ReactNode;
+  /** Class for the wrapper around the trigger. */
   className?: string;
+  /** Class for the portaled menu, which the wrapper's className does not reach. */
+  menuClassName?: string;
   /** ListItem, ListSection, ListDivider, ListHeading and nested Dropdown children. */
   children: ReactNode;
 };
@@ -75,6 +78,7 @@ export function Dropdown({
   triggerLabel,
   trigger,
   className,
+  menuClassName,
   children,
 }: DropdownProps) {
   const [open, setOpen] = useState(false);
@@ -166,7 +170,7 @@ export function Dropdown({
         id={menuId}
         ref={menuRef}
         data-dropdown-chain={chain.join(" ")}
-        className={cx("dropdown__menu", align === "right" && "dropdown__menu--right", side === "right" && "dropdown__menu--side", side === "top" && "dropdown__menu--top", measured && "dropdown__menu--measured")}
+        className={cx("dropdown__menu", align === "right" && "dropdown__menu--right", side === "right" && "dropdown__menu--side", side === "top" && "dropdown__menu--top", measured && "dropdown__menu--measured", menuClassName)}
         style={{ ...pos, ...(measured ? {} : { positionAnchor: anchorName }) } as CSSProperties}
         onPointerEnter={() => hover(true)}
         onPointerLeave={() => hover(false)}
