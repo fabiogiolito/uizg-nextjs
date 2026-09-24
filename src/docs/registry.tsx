@@ -166,10 +166,10 @@ export const registry: DocEntry[] = [
   },
   {
     slug: "frame", name: "Frame", group: "Blocks", description: "A surface that groups cards with a small inset; ghost cards put content straight on it.",
-    controls: { direction: { type: "select", options: ["column", "row"], default: "column" } },
+    controls: { direction: { type: "select", options: ["column", "row"], default: "column" }, color: { type: "select", options: ["", "primary", "success", "warning", "danger"], default: "", doc: "Tints the surface with the color at 5%." } },
     extraProps: [{"name": "children", "type": "ReactNode", "description": "Cards. Use variant=\"ghost\" for content directly on the surface, grow to fill a row."}],
-    render: (p) => <Frame direction={opt(p.direction, "column")}><Card variant="ghost"><TextPair size="lg" title="Section header" description="Brief description" /></Card><Card grow><TextPair size="lg" title="Section title" description="Section description" /></Card><Card variant="ghost"><Text tone="muted">Footer</Text></Card></Frame>,
-    code: (p) => `<Frame${p.direction === "row" ? ' direction="row"' : ""}>\n  <Card variant="ghost"><TextPair size="lg" title="Section header" description="Brief description" /></Card>\n  <Card grow><TextPair size="lg" title="Section title" description="Section description" /></Card>\n  <Card variant="ghost"><Text tone="muted">Footer</Text></Card>\n</Frame>`,
+    render: (p) => <Frame direction={opt(p.direction, "column")} color={opt(p.color, undefined) as never}><Card variant="ghost"><TextPair size="lg" title="Section header" description="Brief description" /></Card><Card grow><TextPair size="lg" title="Section title" description="Section description" /></Card><Card variant="ghost"><Text tone="muted">Footer</Text></Card></Frame>,
+    code: (p) => `<Frame${p.direction === "row" ? ' direction="row"' : ""}${str(p.color) ? ` color="${str(p.color)}"` : ""}>\n  <Card variant="ghost"><TextPair size="lg" title="Section header" description="Brief description" /></Card>\n  <Card grow><TextPair size="lg" title="Section title" description="Section description" /></Card>\n  <Card variant="ghost"><Text tone="muted">Footer</Text></Card>\n</Frame>`,
     cssBlocks: ["Frame"], related: ["card"], previewOn: "raised",
   },
   {

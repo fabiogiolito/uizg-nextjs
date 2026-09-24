@@ -765,6 +765,11 @@ body {
    concentric with the cards inside. */
 .frame { display: flex; flex-direction: column; gap: var(--frame-padding); padding: var(--frame-padding); background: var(--color-surface); border-radius: calc(var(--radius-lg) + var(--frame-padding)); }
 .frame--row { flex-direction: row; align-items: stretch; }
+/* Colored frames: the accent at 5% over the page background, opaque so cards inside stay crisp. */
+.frame--primary { background: color-mix(in srgb, var(--color-primary) 5%, var(--color-bg)); }
+.frame--success { background: color-mix(in srgb, var(--color-success) 5%, var(--color-bg)); }
+.frame--warning { background: color-mix(in srgb, var(--color-warning) 5%, var(--color-bg)); }
+.frame--danger { background: color-mix(in srgb, var(--color-danger) 5%, var(--color-bg)); }
 
 /* ---- Card ---- */
 .card {

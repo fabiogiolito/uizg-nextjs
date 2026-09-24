@@ -50,6 +50,9 @@ Edit it here, check it on the docs site, and the consumer picks it up. Bump `ver
 
 ## Changes
 
+### 0.8.0
+- Frame `color` (primary, success, warning, danger) tints the surface with that color at 5%.
+
 ### 0.7.3
 - Composer and Chat: the microphone button is "Dictate" (voice-to-text), with `onDictate` replacing `onRecord`. `onRecord` still works as a deprecated alias.
 
