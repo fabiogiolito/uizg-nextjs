@@ -854,7 +854,7 @@ body {
 .uizg-portal { display: contents; }
 .dropdown__menu {
   position: fixed;
-  z-index: 30;
+  z-index: var(--z-dropdown);
   /* Anchored below the trigger, flipping above when it would overflow the viewport. */
   position-area: block-end span-inline-end;
   position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
@@ -878,7 +878,7 @@ body {
    A Dropdown inside a menu, triggered by a list item. The child menu opens beside the item and
    flips to the other side or vertically when it would leave the viewport. */
 .dropdown--side { display: contents; }
-.dropdown__menu--side { z-index: 31; margin: 0; }
+.dropdown__menu--side { z-index: calc(var(--z-dropdown) + 1); margin: 0; }
 /* Measured placement: inline top/left drive the position, so anchor rules must not apply. */
 .dropdown__menu--measured { position-area: none; position-try-fallbacks: none; margin: 0; }
 .list__item--submenu-open { background: var(--color-surface); }
@@ -1088,7 +1088,7 @@ body:has(.modal[open]) { overflow: hidden; }
 .tooltip { position: relative; display: inline-flex; }
 .tooltip__content {
   position: fixed;
-  z-index: 40;
+  z-index: var(--z-tooltip);
   max-width: var(--tooltip-max-width);
   width: max-content;
   padding: var(--space-1) var(--space-2);
@@ -1313,7 +1313,7 @@ button.attachment:focus-visible { outline: none; box-shadow: var(--focus-ring); 
 .hover-card { position: relative; display: inline; }
 .hover-card__panel {
   position: fixed;
-  z-index: 40;
+  z-index: var(--z-hover-card);
   display: block;
   width: var(--hover-card-width);
   padding: var(--space-2) 0;
@@ -1364,7 +1364,7 @@ button.attachment:focus-visible { outline: none; box-shadow: var(--focus-ring); 
    Toaster computes from measured heights. Collapsed, older toasts peek out behind the newest;
    expanded, each one is offset by the ones before it. Both the rail height and the offsets
    transition, so the stack slides open. Urgent toasts render outside the rail, always visible. */
-.toaster { position: fixed; z-index: 50; display: flex; flex-direction: column; gap: var(--space-2); width: min(calc(var(--toast-width) + var(--toast-offset) * 2), 100vw); padding: var(--toast-offset); pointer-events: none; }
+.toaster { position: fixed; z-index: var(--z-toast); display: flex; flex-direction: column; gap: var(--space-2); width: min(calc(var(--toast-width) + var(--toast-offset) * 2), 100vw); padding: var(--toast-offset); pointer-events: none; }
 .toaster > * { pointer-events: auto; }
 .toaster--bottom-right { right: 0; bottom: 0; }
 .toaster--bottom-left { left: 0; bottom: 0; }

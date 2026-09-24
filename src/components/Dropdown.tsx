@@ -118,6 +118,8 @@ export function Dropdown({
 
   useEffect(() => {
     if (!open) return;
+    // Hover cards listen for this and close, so a menu never opens under one.
+    document.dispatchEvent(new CustomEvent("uizg:dropdown-open"));
     const onPointerDown = (e: PointerEvent) => {
       if (!inside(e.target)) setOpen(false);
     };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useLayoutEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { cx } from "./cx";
 import { getPortalRoot } from "./portal";
@@ -55,6 +55,14 @@ export function HoverCard({ content, side = "top", align = "center", anchor, ope
     if (leaveTimer.current) clearTimeout(leaveTimer.current);
     leaveTimer.current = setTimeout(() => setHover(false), 150);
   };
+
+  // An opening Dropdown closes hover cards, so a menu never sits under one.
+  useEffect(() => {
+    if (!hover) return;
+    const close = () => setHover(false);
+    document.addEventListener("uizg:dropdown-open", close);
+    return () => document.removeEventListener("uizg:dropdown-open", close);
+  }, [hover]);
 
   // Without anchor positioning, place the panel from the trigger's rect.
   useLayoutEffect(() => {
