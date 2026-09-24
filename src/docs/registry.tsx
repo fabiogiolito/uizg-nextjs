@@ -77,14 +77,15 @@ export const registry: DocEntry[] = [
           expandOnHover={bool(p.expandOnHover)}
           resizable={bool(p.resizable)}
           border={bool(p.border)}
-          header={<><Text size="title">Email</Text><Input size="sm" icon="search" placeholder="Find message" aria-label="Search" /><Button variant="ghost" block icon="edit">Compose</Button></>}
+          header={<><Text size="title">Email</Text><Input size="sm" icon="search" placeholder="Find message" aria-label="Search" /><Dropdown trigger={(t) => <Button {...t} block leading={<Avatar name="Fullstack Engineer" size="xs" shape="square" />} trailingIcon="chevronsUpDown">Fullstack Engineer</Button>}><ListItem label="Fullstack Engineer" selected /><ListItem label="Product Designer" /></Dropdown><Button variant="ghost" block icon="edit">Compose</Button></>}
           footer={bool(p.footer) ? (
             <div className="row">
-              <Dropdown side="top" className="grow" trigger={(t) => <Button {...t} variant="ghost" block><Avatar name="Corina McCoy" size="sm" />Corina McCoy</Button>}>
+              <Dropdown side="top" className="grow" trigger={(t) => <Button {...t} variant="ghost" block><Avatar name="Corina McCoy" size="sm" />Corina McCoy Hernández de la Fuente</Button>}>
                 <ListSection title="Logged in as"><ListText>corina@bytelogic.inc</ListText></ListSection>
                 <ListSection><ListItem icon="settings" label="Settings" /><ListItem icon="book" label="Docs" /></ListSection>
                 <ListSection><ListItem icon="logOut" label="Log out" danger /></ListSection>
               </Dropdown>
+              <Button size="sm" variant="ghost" icon="bell" aria-label="Notifications" />
               <Button size="sm" variant="ghost" icon="settings" aria-label="Settings" />
             </div>
           ) : undefined}

@@ -50,6 +50,9 @@ Edit it here, check it on the docs site, and the consumer picks it up. Bump `ver
 
 ## Changes
 
+### 0.8.8
+- SideNav: every block button label truncates (footer account included); with expandOnHover the collapse toggle is hidden in the rail; the rail also hides a block button's trailingIcon. Button trailing icons carry `button__icon--trailing`.
+
 ### 0.8.7
 - BoardColumn spaces its children itself, so BoardItems placed directly in a column (without a List) get the 4px gap too.
 

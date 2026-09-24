@@ -1532,7 +1532,9 @@ button.attachment:focus-visible { outline: none; box-shadow: var(--focus-ring); 
 /* No list inset here: items share the header controls' edge, so icons and labels line up down the column. */
 .side-nav__body > .list { padding: 0; }
 /* Labels truncate rather than wrap: a nav row is one line. */
-.side-nav .list__item .button__label { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Labels of block buttons truncate rather than wrap: nav rows and the footer account are one line. */
+.side-nav .button--block .button__label { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.side-nav__footer .dropdown, .side-nav__footer .dropdown > .button--block { min-width: 0; }
 .side-nav__footer { padding-block: var(--space-2); border-top: var(--border-width) solid var(--color-border); }
 /* A full-width footer button (the account row) gets extra vertical padding so an avatar inside it has room. */
 .side-nav__footer .button--block { padding-block: var(--space-1); }
@@ -1540,6 +1542,8 @@ button.attachment:focus-visible { outline: none; box-shadow: var(--focus-ring); 
    each control shrinks to its icon (or avatar), centered in the column. Nested items are hidden. */
 .side-nav--collapsed:not(.side-nav--peek:hover) .side-nav__header { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); padding-inline: var(--space-2); }
 .side-nav--collapsed:not(.side-nav--peek:hover) .side-nav__toggle { position: static; order: -1; }
+/* With expandOnHover the rail opens on hover, so the toggle is noise there; hidden, it takes no row and the header keeps its rhythm. */
+.side-nav--peek:not(:hover) .side-nav__toggle { display: none; }
 .side-nav--collapsed:not(.side-nav--peek:hover) .side-nav__header-content { align-items: center; }
 .side-nav--collapsed:not(.side-nav--peek:hover) .side-nav__header-content > .text { display: none; }
 .side-nav--collapsed:not(.side-nav--peek:hover) .side-nav__header-content > :first-child { padding-inline-end: 0; }
@@ -1553,7 +1557,7 @@ button.attachment:focus-visible { outline: none; box-shadow: var(--focus-ring); 
 .side-nav--collapsed:not(.side-nav--peek:hover) .button--block .button__label { flex: none; font-size: 0; gap: 0; }
 /* Whatever wraps the footer button (a row, a dropdown) centers it in the rail. */
 .side-nav--collapsed:not(.side-nav--peek:hover) .side-nav__footer .row, .side-nav--collapsed:not(.side-nav--peek:hover) .side-nav__footer .dropdown { justify-content: center; }
-.side-nav--collapsed:not(.side-nav--peek:hover) .button__trailing, .side-nav--collapsed:not(.side-nav--peek:hover) .list__children, .side-nav--collapsed:not(.side-nav--peek:hover) .side-nav__footer .button:not(.button--block) { display: none; }
+.side-nav--collapsed:not(.side-nav--peek:hover) .button__trailing, .side-nav--collapsed:not(.side-nav--peek:hover) .button--block .button__icon--trailing, .side-nav--collapsed:not(.side-nav--peek:hover) .list__children, .side-nav--collapsed:not(.side-nav--peek:hover) .side-nav__footer .button:not(.button--block) { display: none; }
 /* Peek: hovering the collapsed rail widens the panel over the page. */
 .side-nav--collapsed .side-nav__panel { overflow: hidden; }
 .side-nav--peek:hover .side-nav__panel { width: var(--side-nav-expanded-width); box-shadow: var(--shadow-lg); z-index: 20; }

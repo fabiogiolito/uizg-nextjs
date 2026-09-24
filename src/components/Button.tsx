@@ -68,7 +68,7 @@ export function Button({
       {leading && <span className="button__leading">{leading}</span>}
       {hasChildren && <span className="button__label">{children}</span>}
       {trailingIcon && (
-        <span className="button__icon">
+        <span className="button__icon button__icon--trailing">
           <Icon name={trailingIcon} />
         </span>
       )}
