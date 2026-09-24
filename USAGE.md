@@ -50,6 +50,9 @@ Edit it here, check it on the docs site, and the consumer picks it up. Bump `ver
 
 ## Changes
 
+### 0.8.2
+- Tooltips render in the shared portal, like menus and hover cards, so nothing can clip or cover them. Same API.
+
 ### 0.8.1
 - ActionBar actions take `overflow: "always"` to live in the "more" menu even when there is room; they keep icon, danger and items (as a submenu) and never count toward the inline width.
 

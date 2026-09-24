@@ -1097,7 +1097,7 @@ body:has(.modal[open]) { overflow: hidden; }
 @keyframes backdrop-in { from { opacity: 0; } }
 
 /* ---- Tooltip ----
-   Fixed and anchored to the trigger, so overflow containers cannot clip it. Each side sets a
+   Portaled and anchored to the trigger, so no container can clip or cover it. Each side sets a
    position-area; the fallbacks flip it when it would leave the viewport. */
 .tooltip { position: relative; display: inline-flex; }
 .tooltip__content {
@@ -1106,6 +1106,7 @@ body:has(.modal[open]) { overflow: hidden; }
   max-width: var(--tooltip-max-width);
   width: max-content;
   padding: var(--space-1) var(--space-2);
+  font-family: var(--font-primary);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height);
@@ -1118,19 +1119,12 @@ body:has(.modal[open]) { overflow: hidden; }
   transition: opacity var(--duration) var(--easing);
   position-try-fallbacks: flip-block, flip-inline;
 }
-.tooltip:hover .tooltip__content, .tooltip:focus-within .tooltip__content { opacity: 1; }
-.tooltip--top .tooltip__content { position-area: block-start; margin-bottom: var(--space-1); }
-.tooltip--bottom .tooltip__content { position-area: block-end; margin-top: var(--space-1); }
-.tooltip--left .tooltip__content { position-area: inline-start; margin-right: var(--space-1); }
-.tooltip--right .tooltip__content { position-area: inline-end; margin-left: var(--space-1); }
-/* Fallback without anchor positioning: absolute placement inside the trigger. */
-@supports not (anchor-name: --a) {
-  .tooltip__content { position: absolute; }
-  .tooltip--top .tooltip__content { bottom: calc(100% + var(--space-1)); left: 50%; transform: translateX(-50%); margin: 0; }
-  .tooltip--bottom .tooltip__content { top: calc(100% + var(--space-1)); left: 50%; transform: translateX(-50%); margin: 0; }
-  .tooltip--left .tooltip__content { right: calc(100% + var(--space-1)); top: 50%; transform: translateY(-50%); margin: 0; }
-  .tooltip--right .tooltip__content { left: calc(100% + var(--space-1)); top: 50%; transform: translateY(-50%); margin: 0; }
-}
+.tooltip__content--visible { opacity: 1; }
+.tooltip__content--top { position-area: block-start; margin-bottom: var(--space-1); }
+.tooltip__content--bottom { position-area: block-end; margin-top: var(--space-1); }
+.tooltip__content--left { position-area: inline-start; margin-right: var(--space-1); }
+.tooltip__content--right { position-area: inline-end; margin-left: var(--space-1); }
+@supports not (anchor-name: --a) { .tooltip__content { margin: 0; } }
 
 /* ---- Context menu ---- */
 .context-menu { display: contents; }
