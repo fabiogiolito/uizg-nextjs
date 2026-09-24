@@ -50,6 +50,9 @@ Edit it here, check it on the docs site, and the consumer picks it up. Bump `ver
 
 ## Changes
 
+### 0.8.5
+- Board: the focused column hides its collapse toggle and always renders expanded, even if it was collapsed before focus.
+
 ### 0.8.4
 - Split: double-clicking the divider sets a 50/50 split instead of the default size.
 

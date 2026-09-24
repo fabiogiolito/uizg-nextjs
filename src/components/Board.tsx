@@ -58,6 +58,8 @@ export type BoardColumnProps = {
 export function BoardColumn({ id, title, icon, count, actions, header, collapsible, collapsed: collapsedProp, defaultCollapsed = false, onCollapsedChange, className, children }: BoardColumnProps) {
   const { drag, setDrag, onMove, focus } = useContext(BoardContext);
   const hidden = focus !== null && focus !== id;
+  // The focused column is the only one on screen; collapsing it would leave nothing.
+  const focused = focus === id;
   const [collapsedState, setCollapsedState] = useState(defaultCollapsed);
   const collapsed = collapsedProp ?? collapsedState;
   const [over, setOver] = useState(false);
@@ -84,7 +86,7 @@ export function BoardColumn({ id, title, icon, count, actions, header, collapsib
     },
   };
 
-  if (collapsed) {
+  if (collapsed && !focused) {
     return (
       <Card
         className={cx("board__column", "board__column--collapsed", hidden && "board__column--hidden", over && "board__column--over", className)}
@@ -115,7 +117,7 @@ export function BoardColumn({ id, title, icon, count, actions, header, collapsib
           {count !== undefined && <span className="board__column-count">{count}</span>}
           <div className="board__column-actions">
             {actions}
-            {collapsible && <Button size="sm" variant="ghost" icon="chevronsLeft" aria-label="Collapse column" onClick={() => setCollapsed(true)} />}
+            {collapsible && !focused && <Button size="sm" variant="ghost" icon="chevronsLeft" aria-label="Collapse column" onClick={() => setCollapsed(true)} />}
           </div>
         </div>
         {header}
