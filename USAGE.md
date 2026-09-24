@@ -50,6 +50,9 @@ Edit it here, check it on the docs site, and the consumer picks it up. Bump `ver
 
 ## Changes
 
+### 0.8.6
+- Board items are 4px apart.
+
 ### 0.8.5
 - Board: the focused column hides its collapse toggle and always renders expanded, even if it was collapsed before focus.
 
