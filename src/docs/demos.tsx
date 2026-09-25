@@ -26,6 +26,8 @@ const columns: Column<Person>[] = [
   { key: "email", header: "Email", width: 220, editable: true, mono: true },
   { key: "role", header: "Role", width: 120, editable: true },
   { key: "commits", header: "Commits", width: 110, align: "end", mono: true },
+  // width: "auto" measures the widest cell, so the actions column never clips or leaves a gap.
+  { key: "actions", header: "", width: "auto", sticky: "right", noMenu: true, render: () => <span className="row"><Button size="sm">Preview</Button><Dropdown size="sm" variant="ghost" icon="more" hideChevron triggerLabel="More" align="right"><ListItem label="Send now" color="primary" /><ListItem label="Delete" danger /></Dropdown></span> },
 ];
 export function TableDemo({ p }: { p: Props }) {
   const [rows, setRows] = useState<Person[]>(people.map((x, i) => ({ id: x.value, name: x.label, email: `${x.value}@example.com`, role: ["Engineer", "Researcher", "Lead"][i % 3], commits: 120 * (i + 1) })));

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
 import { cx } from "./cx";
 import { Button } from "./Button";
 import { Checkbox } from "./Checkbox";
@@ -11,8 +11,8 @@ import { ListDivider, ListItem } from "./List";
 export type Column<Row> = {
   key: string;
   header: ReactNode;
-  /** Initial width in px. */
-  width?: number;
+  /** Initial width in px. "auto" measures the widest cell and never stretches beyond it. */
+  width?: number | "auto";
   minWidth?: number;
   /** With `fill`, this column absorbs the extra width; its width then acts as a minimum. */
   flex?: boolean;
@@ -80,6 +80,8 @@ const DEFAULT_WIDTH = 160;
 const DEFAULT_MIN_WIDTH = 64;
 
 type ColumnState = { key: string; width: number; hidden: boolean; label?: string };
+/** Auto columns start at 0 and get their measured width from the layout effect. */
+const initialWidth = (width: Column<unknown>["width"]) => (width === "auto" ? 0 : width ?? DEFAULT_WIDTH);
 type Editing = { row: number; key: string; value: unknown } | null;
 type Sort = { key: string; dir: "asc" | "desc" } | null;
 
@@ -105,7 +107,7 @@ export function Table<Row extends Record<string, unknown>>({
   className,
 }: TableProps<Row>) {
   const [state, setState] = useState<ColumnState[]>(() =>
-    columns.map((c) => ({ key: c.key, width: c.width ?? DEFAULT_WIDTH, hidden: false })),
+    columns.map((c) => ({ key: c.key, width: initialWidth(c.width), hidden: false })),
   );
   const [editing, setEditing] = useState<Editing>(null);
   // Mirror of the editing state for commit handlers created before the last keystroke (blur after typing).
@@ -121,13 +123,14 @@ export function Table<Row extends Record<string, unknown>>({
   const lastClickedRef = useRef<number | null>(null);
 
   const byKey = useMemo(() => Object.fromEntries(columns.map((c) => [c.key, c])), [columns]);
+  const isAuto = (key: string) => byKey[key]?.width === "auto";
   // Reconcile stored state with the current column set: drop removed columns, append new ones.
   const reconcile = useCallback(
     (prev: ColumnState[]): ColumnState[] => [
       ...prev.filter((s) => byKey[s.key]),
       ...columns
         .filter((c) => !prev.some((s) => s.key === c.key))
-        .map((c) => ({ key: c.key, width: c.width ?? DEFAULT_WIDTH, hidden: false })),
+        .map((c) => ({ key: c.key, width: initialWidth(c.width), hidden: false })),
     ],
     [byKey, columns],
   );
@@ -146,6 +149,30 @@ export function Table<Row extends Record<string, unknown>>({
     },
     [onColumnsChange, reconcile],
   );
+
+  /* ---- Auto width: measure the max-content spans of each auto column and write it into its state width. ---- */
+  const tableRef = useRef<HTMLTableElement>(null);
+  // Auto columns the user has resized by hand keep that width until the resizer is double-clicked.
+  const [manual, setManual] = useState<string[]>([]);
+  const autoKeys = visible.filter((s) => isAuto(s.key) && !manual.includes(s.key)).map((s) => s.key).join(",");
+  useLayoutEffect(() => {
+    const table = tableRef.current;
+    if (!table || !autoKeys) return;
+    const widths: Record<string, number> = {};
+    for (const key of autoKeys.split(",")) {
+      let w = 0;
+      for (const el of table.querySelectorAll<HTMLElement>(`[data-fit="${key}"]`)) {
+        const cs = getComputedStyle(el.closest("td, th")!);
+        w = Math.max(w, el.offsetWidth + parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight) + 1);
+      }
+      widths[key] = Math.ceil(w);
+    }
+    setState((prev) => {
+      const next = reconcile(prev);
+      return next.some((c) => widths[c.key] !== undefined && widths[c.key] !== c.width) ? next.map((c) => (widths[c.key] === undefined ? c : { ...c, width: widths[c.key] })) : prev;
+    });
+    // ponytail: re-measures on every state/rows change; guard above makes it a no-op when nothing moved.
+  }, [rows, autoKeys, current, compact, bordered, reconcile]);
 
   /* Sorted view keeps the original index so edits map back to `rows`. */
   const view = useMemo(() => {
@@ -208,6 +235,7 @@ export function Table<Row extends Record<string, unknown>>({
     e.preventDefault();
     e.stopPropagation();
     resizeRef.current = { key, startX: e.clientX, startWidth: current.find((c) => c.key === key)!.width };
+    if (isAuto(key)) setManual((m) => (m.includes(key) ? m : [...m, key]));
     const move = (ev: PointerEvent) => {
       const r = resizeRef.current;
       if (!r) return;
@@ -290,7 +318,8 @@ export function Table<Row extends Record<string, unknown>>({
 
   const totalWidth = ordered.reduce((w, c) => w + c.width, 0) + (selectable ? selectWidth : 0);
   // Fill: the table is as wide as its wrapper (never narrower than its columns) and one column has no fixed width.
-  const flexKey = fill ? (ordered.find((c) => c.flex) ?? [...ordered].reverse().find((c) => !c.sticky) ?? ordered[ordered.length - 1])?.key : undefined;
+  // Auto columns are never the flex column: they must stay at their measured width.
+  const flexKey = fill ? (ordered.find((c) => c.flex && !isAuto(c.key)) ?? [...ordered].reverse().find((c) => !c.sticky && !isAuto(c.key)) ?? [...ordered].reverse().find((c) => !isAuto(c.key)))?.key : undefined;
   const selectClass = (base: string) =>
     cx(base, `${base}--select`, selectStickyLeft && `${base}--sticky ${base}--sticky-left`, lastLeft === "__select" && `${base}--sticky-edge-left`);
   const selectStyle = selectStickyLeft ? { left: 0 } : undefined;
@@ -301,13 +330,14 @@ export function Table<Row extends Record<string, unknown>>({
       style={maxHeight !== undefined ? { maxHeight } : undefined}
     >
       <table
+        ref={tableRef}
         className={cx("table", "table--fixed", bordered && "table--bordered", compact && "table--compact")}
         style={fill ? { width: "100%", minWidth: totalWidth } : { width: totalWidth }}
       >
         <colgroup>
           {selectable && <col style={{ width: selectWidth }} />}
           {ordered.map((c) => (
-            <col key={c.key} style={c.key === flexKey ? undefined : { width: c.width }} />
+            <col key={c.key} style={c.key === flexKey || !c.width ? undefined : { width: c.width }} />
           ))}
         </colgroup>
         <thead className="table__head">
@@ -325,6 +355,7 @@ export function Table<Row extends Record<string, unknown>>({
                   key={c.key}
                   className={cx(
                     cellClass(c, "table__head-cell"),
+                    isAuto(c.key) && "table__head-cell--fit",
                     reorderable && "table__head-cell--draggable",
                     drag?.over === i && drag.from !== i && (drag.from < i ? "table__head-cell--drop-after" : "table__head-cell--drop-before"),
                     drag?.from === i && "table__head-cell--dragging",
@@ -347,7 +378,7 @@ export function Table<Row extends Record<string, unknown>>({
                   }}
                   onDragEnd={() => setDrag(null)}
                 >
-                  <div className="table__head-inner">
+                  <div className="table__head-inner" data-fit={isAuto(c.key) ? c.key : undefined}>
                     {isRenaming ? (
                       <input
                         className="table__editor table__editor--header"
@@ -379,7 +410,10 @@ export function Table<Row extends Record<string, unknown>>({
                     <span
                       className="table__resizer"
                       onPointerDown={(e) => onResizeStart(c.key, e)}
-                      onDoubleClick={() => commitColumns((prev) => prev.map((s) => (s.key === c.key ? { ...s, width: byKey[s.key].width ?? DEFAULT_WIDTH } : s)))}
+                      onDoubleClick={() => {
+                        setManual((m) => m.filter((k) => k !== c.key));
+                        commitColumns((prev) => prev.map((s) => (s.key === c.key ? { ...s, width: initialWidth(byKey[s.key].width) } : s)));
+                      }}
                       aria-hidden
                     />
                   )}
@@ -413,7 +447,7 @@ export function Table<Row extends Record<string, unknown>>({
                 const cell = (trigger?: { onContextMenu: (e: React.MouseEvent) => void }) => (
                   <td
                     key={c.key}
-                    className={cx(cellClass(c, "table__cell"), c.editable && "table__cell--editable", isEditing && "table__cell--editing")}
+                    className={cx(cellClass(c, "table__cell"), isAuto(c.key) && "table__cell--fit", c.editable && "table__cell--editable", isEditing && "table__cell--editing")}
                     style={cellStyle(c)}
                     tabIndex={c.editable ? 0 : undefined}
                     onClick={() => startEdit(index, c)}
@@ -454,7 +488,7 @@ export function Table<Row extends Record<string, unknown>>({
                         }}
                       />
                     ) : (
-                      <span className="table__value">{c.render ? c.render(row, index, { anchor }) : String(row[c.key] ?? "")}</span>
+                      <span className="table__value" data-fit={isAuto(c.key) ? c.key : undefined}>{c.render ? c.render(row, index, { anchor }) : String(row[c.key] ?? "")}</span>
                     )}
                   </td>
                 );

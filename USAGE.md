@@ -50,6 +50,9 @@ Edit it here, check it on the docs site, and the consumer picks it up. Bump `ver
 
 ## Changes
 
+### 0.8.10
+- Table: `width: "auto"` on a Column measures the widest cell (header included) and sizes the `<col>` to it; never the flex column. Resizing pins the width, double-clicking the resizer re-measures.
+
 ### 0.8.9
 - ListItem: `color="primary" | "danger"` prop; `danger` stays as an alias for `color="danger"`. Adds `list__item--primary`.
 

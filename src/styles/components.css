@@ -1640,6 +1640,9 @@ button.attachment:focus-visible { outline: none; box-shadow: var(--focus-ring); 
 
 /* Header content: label, sort indicator, hover menu */
 .table__head-inner { display: flex; align-items: center; gap: var(--space-1); min-width: 0; }
+/* Auto-width columns: content keeps its natural width so it can be measured even while the column is squished. */
+.table__cell--fit .table__value { display: inline-block; width: max-content; vertical-align: top; }
+.table__head-cell--fit .table__head-inner { width: max-content; }
 .table__head-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .table__head-sort { flex-shrink: 0; }
 /* Negative block margin so the menu button does not add to the header height. */
