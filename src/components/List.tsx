@@ -37,6 +37,9 @@ export type ListItemProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "child
   /** Render the item as a link. */
   href?: string;
   selected?: boolean;
+  /** Accent color: primary for the main action, danger for destructive ones. */
+  color?: "primary" | "danger";
+  /** Alias for color="danger". */
   danger?: boolean;
   /** Nested ListItems, rendered indented below this one with a guide line. */
   children?: ReactNode;
@@ -45,7 +48,7 @@ export type ListItemProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "child
   defaultExpanded?: boolean;
 };
 
-export function ListItem({ icon, leading, label, description, trailing, trailingIcon, selected, danger, children, collapsible, defaultExpanded = true, href, className, onClick, ...rest }: ListItemProps) {
+export function ListItem({ icon, leading, label, description, trailing, trailingIcon, selected, color, danger, children, collapsible, defaultExpanded = true, href, className, onClick, ...rest }: ListItemProps) {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const hasChildren = children !== undefined && children !== null && children !== false;
   const item = (
@@ -69,7 +72,7 @@ export function ListItem({ icon, leading, label, description, trailing, trailing
       href={href}
       active={selected}
       aria-expanded={collapsible && hasChildren ? expanded : undefined}
-      className={cx("list__item", selected && "list__item--selected", danger && "list__item--danger", className)}
+      className={cx("list__item", selected && "list__item--selected", (danger ? "danger" : color) && `list__item--${danger ? "danger" : color}`, className)}
       onClick={(e) => {
         if (collapsible && hasChildren) setExpanded((v) => !v);
         onClick?.(e);

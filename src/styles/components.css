@@ -836,6 +836,8 @@ body {
 .list__item .text-pair { flex: 1; }
 .list__item--selected { background: var(--color-primary-soft); color: var(--color-primary); }
 .list__item--selected:hover { background: var(--color-primary-soft-hover); }
+.list__item--primary { color: var(--color-primary); }
+.list__item--primary:hover { background: hsl(from var(--color-primary) h s l / 0.1); }
 .list__item--danger { color: var(--color-danger); }
 .list__item--danger:hover { background: hsl(from var(--color-danger) h s l / 0.1); }
 .list__item--selected .button__trailing { color: currentColor; }

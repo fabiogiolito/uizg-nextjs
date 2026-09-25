@@ -50,6 +50,9 @@ Edit it here, check it on the docs site, and the consumer picks it up. Bump `ver
 
 ## Changes
 
+### 0.8.9
+- ListItem: `color="primary" | "danger"` prop; `danger` stays as an alias for `color="danger"`. Adds `list__item--primary`.
+
 ### 0.8.8
 - SideNav: every block button label truncates (footer account included); with expandOnHover the collapse toggle is hidden in the rail; the rail also hides a block button's trailingIcon. Button trailing icons carry `button__icon--trailing`.
 
